@@ -1,20 +1,27 @@
 import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class UserService extends ChangeNotifier {
-  // Singleton pattern
   static final UserService _instance = UserService._internal();
   factory UserService() => _instance;
   UserService._internal();
 
-  String _username = 'User'; // Initial username
+  late Box _box;
+  String _username = 'User';
 
-  // Public getter for the username
   String get username => _username;
 
-  // Method to update the username and notify all listening screens
+  Future<void> init() async {
+    _box = Hive.box('user_data');
+    // Load the username from the database when the app starts
+    _username = _box.get('username', defaultValue: 'User');
+  }
+
   void updateUsername(String newName) {
     if (newName.isNotEmpty) {
       _username = newName;
+      // Save the new username to the database
+      _box.put('username', newName);
       notifyListeners();
     }
   }
