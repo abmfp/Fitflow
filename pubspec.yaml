@@ -1,0 +1,40 @@
+name: fitflow
+description: A new Flutter project.
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI & Animations
+  cupertino_icons: ^1.0.2
+  page_transition: ^2.1.0  # For fluid animations
+  table_calendar: ^3.0.9 # For the calendar view
+  fl_chart: ^0.64.0        # For progress charts
+
+  # Functionality
+  image_picker: ^1.0.4     # To pick images/videos for custom exercises
+  uuid: ^4.2.1             # To generate unique IDs for workouts/exercises
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  # To add custom fonts
+  # fonts:
+  #   - family: Montserrat
+  #     fonts:
+  #       - asset: fonts/Montserrat-Bold.ttf
+  #         weight: 700
+  #       - asset: fonts/Montserrat-Regular.ttf
