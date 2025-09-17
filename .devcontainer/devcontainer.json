@@ -1,10 +1,8 @@
 {
-      "name": "Flutter Codespace",
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-          "features": {
-              "ghcr.io/devcontainers/features/flutter:2": {}
-                },
-                  "postCreateCommand": "flutter doctor"
-                  }
-                  
+  "name": "Flutter Codespace",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/flutter:2": {}
+  },
+  "postCreateCommand": "flutter doctor"
 }
