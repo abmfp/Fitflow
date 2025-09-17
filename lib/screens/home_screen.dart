@@ -1,16 +1,14 @@
-import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/services/weight_service.dart';
+import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package.page_transition/page_transition.dart';
+import 'package:page_transition/page_transition.dart';
 import 'workout_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  // 1. Accept the navigation function
   final VoidCallback onNavigateToProgress;
-
   const HomeScreen({super.key, required this.onNavigateToProgress});
 
   @override
@@ -39,11 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onDataChanged() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _showAddWeightDialog(BuildContext context) {
-    // ... same as before
+    // ... dialog code is the same ...
   }
 
   @override
@@ -74,13 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 24),
                 _buildWorkoutCard(context, workoutTitle, exerciseCount),
                 const SizedBox(height: 16),
-                
-                // 2. Updated the 'Weight' card to be tappable
                 _buildInfoCard(
                   context,
                   icon: Icons.monitor_weight_outlined,
                   title: 'Weight for ${DateFormat('d MMM').format(today)}',
-                  subtitle: 'View your history', // Updated subtitle
+                  subtitle: 'View your history',
                   trailing: IconButton(
                     icon: const Icon(Icons.add, color: Colors.white),
                     onPressed: () => _showAddWeightDialog(context),
@@ -89,16 +87,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
                   },
                 ),
-                
                 const SizedBox(height: 16),
-
-                // 3. Updated the 'Day' card to be tappable
                 _buildInfoCard(
                   context,
                   icon: Icons.local_fire_department_outlined,
-                  title: 'Day 0 / 5',
-                  subtitle: 'View your progress', // Updated subtitle
-                  onTap: widget.onNavigateToProgress, // Use the passed-in function
+                  title: 'Day ${_workoutService.weeklyWorkoutCount} / 5',
+                  subtitle: 'View your progress',
+                  onTap: widget.onNavigateToProgress,
                 ),
               ],
             ),
@@ -108,26 +103,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 4. Modified the _buildInfoCard helper to accept an onTap function
-  Widget _buildInfoCard(BuildContext context, {required IconData icon, required String title, required String subtitle, Widget? trailing, VoidCallback? onTap}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: ListTile(
-            leading: Icon(icon, color: Colors.white, size: 28),
-            title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
-            trailing: trailing,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ... (the rest of your HomeScreen code remains the same)
-  Widget _buildWorkoutCard(BuildContext context, String title, String count) { /* ... */ }
-  Widget _buildDateSelector(DateTime selectedDate) { /* ... */ }
+  // ... all helper widgets (_buildWorkoutCard, _buildInfoCard, _buildDateSelector) are the same ...
 }
