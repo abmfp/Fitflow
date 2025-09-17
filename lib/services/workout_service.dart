@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
-// We'll move the Exercise class here so it can be shared.
 class Exercise {
   final String name;
   bool isCompleted;
@@ -8,32 +8,64 @@ class Exercise {
   Exercise({required this.name, this.isCompleted = false});
 }
 
-// This service manages the workout state and notifies listeners of changes.
 class WorkoutService extends ChangeNotifier {
-  // Singleton pattern to ensure only one instance of the service exists.
   static final WorkoutService _instance = WorkoutService._internal();
   factory WorkoutService() => _instance;
   WorkoutService._internal();
 
-  // The state: a list of today's exercises.
-  final List<Exercise> _todaysExercises = [
-    Exercise(name: 'Bench Press'),
-    Exercise(name: 'Incline Dumbbell Press'),
-    Exercise(name: 'Dumbbell Bicep Curls'),
-    Exercise(name: 'Hammer Curls'),
+  // The single source of truth for the weekly plan
+  final List<Map<String, dynamic>> _weeklyPlan = [
+    {'day': 'Monday', 'muscles': ['Chest', 'Biceps']},
+    {'day': 'Tuesday', 'muscles': ['Back', 'Triceps']},
+    {'day': 'Wednesday', 'muscles': ['Legs', 'Shoulders']},
+    {'day': 'Thursday', 'muscles': []}, // Rest day
+    {'day': 'Friday', 'muscles': ['Chest', 'Back']},
+    {'day': 'Saturday', 'muscles': ['Abs']},
+    {'day': 'Sunday', 'muscles': []}, // Rest day
   ];
 
-  // Public getter for the exercises.
-  List<Exercise> get todaysExercises => _todaysExercises;
+  List<Map<String, dynamic>> get weeklyPlan => _weeklyPlan;
 
-  // Getter for live stats
-  int get completedExercisesCount => _todaysExercises.where((e) => e.isCompleted).length;
-  int get totalExercisesCount => _todaysExercises.length;
+  // The state for the currently active workout
+  List<Exercise> _currentWorkoutExercises = [];
+
+  List<Exercise> get todaysExercises => _currentWorkoutExercises;
+
+  // Method to get the plan for a specific day
+  List<String> getMusclesForDay(DateTime date) {
+    String dayOfWeek = DateFormat('EEEE').format(date); // E.g., "Wednesday"
+    var planForDay = _weeklyPlan.firstWhere(
+      (plan) => plan['day'] == dayOfWeek,
+      orElse: () => {'muscles': []},
+    );
+    return List<String>.from(planForDay['muscles']);
+  }
+
+  // Method to load the exercises for the current day's workout
+  void startWorkoutForDay(DateTime date) {
+    List<String> muscles = getMusclesForDay(date);
+    // This is placeholder logic. A real app would have a map of exercises for each muscle.
+    // For now, we'll just use the muscle names as exercise names.
+    _currentWorkoutExercises = muscles.map((muscle) => Exercise(name: '$muscle Workout')).toList();
+    notifyListeners();
+  }
+
+  // Live stats for the CURRENT workout
+  int get completedExercisesCount => _currentWorkoutExercises.where((e) => e.isCompleted).length;
+  int get totalExercisesCount => _currentWorkoutExercises.length;
   double get completionPercentage => totalExercisesCount == 0 ? 0 : (completedExercisesCount / totalExercisesCount) * 100;
 
-  // Method to update an exercise's status
   void toggleExerciseCompletion(Exercise exercise) {
     exercise.isCompleted = !exercise.isCompleted;
-    notifyListeners(); // This is the crucial part! It tells listening widgets to rebuild.
+    notifyListeners();
+  }
+
+  // Method for the PlanScreen to update the schedule
+  void updatePlanForDay(String day, List<String> muscles) {
+      int dayIndex = _weeklyPlan.indexWhere((plan) => plan['day'] == day);
+      if (dayIndex != -1) {
+        _weeklyPlan[dayIndex]['muscles'] = muscles;
+        notifyListeners(); // Notify if other screens depend on the plan itself
+      }
   }
 }
