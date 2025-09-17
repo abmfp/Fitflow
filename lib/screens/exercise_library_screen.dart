@@ -1,22 +1,20 @@
+import 'package:fitflow/screens/edit_exercise_screen.dart'; // Import the new screen
 import 'package:flutter/material.dart';
+import 'package.page_transition/page_transition.dart';
 
-// A simple model for our custom exercises
 class CustomExercise {
   final String name;
   final String muscleGroup;
-
   CustomExercise({required this.name, required this.muscleGroup});
 }
 
 class ExerciseLibraryScreen extends StatefulWidget {
   const ExerciseLibraryScreen({super.key});
-
   @override
   State<ExerciseLibraryScreen> createState() => _ExerciseLibraryScreenState();
 }
 
 class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
-  // Sample list of custom exercises
   final List<CustomExercise> _exercises = [
     CustomExercise(name: 'Deadlifts', muscleGroup: 'Back'),
     CustomExercise(name: 'Barbell Incline Bench Press', muscleGroup: 'Chest'),
@@ -25,7 +23,6 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
     CustomExercise(name: 'Lat Pulldowns', muscleGroup: 'Back'),
   ];
 
-  // This method groups the exercises by muscle for display
   Map<String, List<CustomExercise>> get _groupedExercises {
     final Map<String, List<CustomExercise>> grouped = {};
     for (var exercise in _exercises) {
@@ -34,8 +31,29 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
     return grouped;
   }
 
+  // Navigate to add a new exercise
+  void _navigateToAddExercise() {
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeft,
+        child: const EditExerciseScreen(), // Don't pass an exercise, so it's in "Add" mode
+      ),
+    );
+  }
+
+  // Navigate to edit an existing exercise
+  void _navigateToEditExercise(CustomExercise exercise) {
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeft,
+        child: EditExerciseScreen(initialExercise: exercise), // Pass the exercise to edit
+      ),
+    );
+  }
+
   void _deleteExercise(CustomExercise exercise) {
-    // Show a confirmation dialog before deleting
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -46,9 +64,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
           TextButton(
             child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
             onPressed: () {
-              setState(() {
-                _exercises.remove(exercise);
-              });
+              setState(() { _exercises.remove(exercise); });
               Navigator.of(ctx).pop();
             },
           ),
@@ -69,14 +85,9 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
         elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Navigate to an "Add Exercise" screen
-        },
+        onPressed: _navigateToAddExercise, // Updated this line
         backgroundColor: Colors.white,
-        child: Icon(
-          Icons.add,
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
+        child: Icon(Icons.add, color: Theme.of(context).scaffoldBackgroundColor),
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(20),
@@ -84,19 +95,13 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
         itemBuilder: (context, index) {
           final muscleGroup = muscleGroups[index];
           final exercisesInGroup = grouped[muscleGroup]!;
-          
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Muscle group header
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, bottom: 10.0),
-                child: Text(
-                  muscleGroup,
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
+                child: Text(muscleGroup, style: Theme.of(context).textTheme.displayMedium),
               ),
-              // List of exercises for that group
               ...exercisesInGroup.map((exercise) {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 10),
@@ -108,9 +113,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.edit_outlined, size: 20),
-                          onPressed: () {
-                            // TODO: Navigate to an "Edit Exercise" screen
-                          },
+                          onPressed: () => _navigateToEditExercise(exercise), // Updated this line
                         ),
                         IconButton(
                           icon: Icon(Icons.delete_outline, size: 20, color: Theme.of(context).colorScheme.error),
@@ -128,4 +131,3 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
     );
   }
 }
-
