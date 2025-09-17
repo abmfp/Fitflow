@@ -1,9 +1,38 @@
 import 'package:fitflow/screens/exercise_library_screen.dart';
+import 'package:fitflow/screens/settings_screen.dart'; // Import settings screen
+import 'package:fitflow/services/user_service.dart'; // Import user service
 import 'package:flutter/material.dart';
 import 'package.page_transition/page_transition.dart';
 
-class ProfileScreen extends StatelessWidget {
+// 1. Convert to StatefulWidget to listen for changes
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final UserService _userService = UserService();
+
+  // 2. Add listener
+  @override
+  void initState() {
+    super.initState();
+    _userService.addListener(_onUserChanged);
+  }
+
+  // 3. Remove listener
+  @override
+  void dispose() {
+    _userService.removeListener(_onUserChanged);
+    super.dispose();
+  }
+
+  // 4. Rebuild the screen when username changes
+  void _onUserChanged() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,24 +42,15 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // --- Profile Header ---
               _buildProfileHeader(context),
               const SizedBox(height: 40),
-
-              // --- Options List ---
               _buildOptionCard(
                 context,
                 icon: Icons.list_alt_rounded,
                 title: 'Exercise Library',
                 subtitle: 'View all your exercises',
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: const ExerciseLibraryScreen(),
-                    ),
-                  );
+                  Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const ExerciseLibraryScreen()));
                 },
               ),
               _buildOptionCard(
@@ -45,13 +65,12 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.settings_rounded,
                 title: 'Settings',
                 subtitle: 'App preferences',
-                onTap: () {},
+                onTap: () {
+                  // 5. Navigate to the new Settings screen
+                  Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const SettingsScreen()));
+                },
               ),
-
-              // This Spacer pushes the logout button to the bottom
               const Spacer(),
-
-              // --- Log Out Button ---
               _buildLogoutButton(context),
             ],
           ),
@@ -60,48 +79,30 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // Helper widget for the profile picture and name
   Widget _buildProfileHeader(BuildContext context) {
     return Row(
       children: [
         Stack(
           clipBehavior: Clip.none,
           children: [
-            const CircleAvatar(
-              radius: 40,
-              backgroundColor: Color(0xFF3A384B),
-              child: Icon(Icons.person, size: 50, color: Colors.white70),
-            ),
+            const CircleAvatar(radius: 40, backgroundColor: Color(0xFF3A384B), child: Icon(Icons.person, size: 50, color: Colors.white70)),
             Positioned(
-              bottom: -5,
-              right: -5,
+              bottom: -5, right: -5,
               child: CircleAvatar(
-                radius: 15,
-                backgroundColor: Colors.white,
-                child: Icon(
-                  Icons.edit,
-                  size: 18,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
+                radius: 15, backgroundColor: Colors.white,
+                child: Icon(Icons.edit, size: 18, color: Theme.of(context).scaffoldBackgroundColor),
               ),
             ),
           ],
         ),
         const SizedBox(width: 20),
-        Text(
-          'Hi User!',
-          style: Theme.of(context).textTheme.displayLarge,
-        ),
+        // 6. Use the live username from the service
+        Text('Hi ${_userService.username}!', style: Theme.of(context).textTheme.displayLarge),
       ],
     );
   }
 
-  // Reusable widget for the tappable option cards
-  Widget _buildOptionCard(BuildContext context,
-      {required IconData icon,
-      required String title,
-      required String subtitle,
-      required VoidCallback onTap}) {
+  Widget _buildOptionCard(BuildContext context, {required IconData icon, required String title, required String subtitle, required VoidCallback onTap}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: Card(
@@ -109,33 +110,22 @@ class ProfileScreen extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+            contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
             leading: Icon(icon, color: Colors.white, size: 28),
             title: Text(title, style: Theme.of(context).textTheme.labelLarge),
-            subtitle:
-                Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
-            trailing:
-                const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
           ),
         ),
       ),
     );
   }
 
-  // Widget for the log out button
   Widget _buildLogoutButton(BuildContext context) {
     return Center(
       child: TextButton(
-        onPressed: () {
-          // TODO: Implement logout logic
-        },
-        child: Text(
-          'Log Out',
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.error,
-              ),
-        ),
+        onPressed: () {},
+        child: Text('Log Out', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.error)),
       ),
     );
   }
