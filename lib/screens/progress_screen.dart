@@ -1,5 +1,3 @@
-// lib/screens/progress_screen.dart
-import 'package:fitflow/widgets/gradient_background.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -9,84 +7,177 @@ class ProgressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Progress'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: GradientBackground(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Workout History', style: Theme.of(context).textTheme.displayLarge),
-              const SizedBox(height: 20),
-              _buildCalendar(context),
-              const SizedBox(height: 40),
-              Text('Weight Tracking (kg)', style: Theme.of(context).textTheme.displayLarge),
-              const SizedBox(height: 20),
-              _buildWeightChart(context),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+    final missedDays = {2, 4, 6, 8, 12};
+    final today = DateTime.utc(2025, 9, 17);
 
-  Widget _buildCalendar(BuildContext context) {
-    return Card(
-      color: Colors.white.withOpacity(0.1),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TableCalendar(
-          firstDay: DateTime.utc(2020, 1, 1),
-          lastDay: DateTime.utc(2030, 12, 31),
-          focusedDay: DateTime.now(),
-          calendarStyle: CalendarStyle(
-            defaultTextStyle: const TextStyle(color: Colors.white),
-            weekendTextStyle: TextStyle(color: Theme.of(context).primaryColor.withOpacity(0.7)),
-            todayDecoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.5),
-              shape: BoxShape.circle,
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your Progress',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                const SizedBox(height: 30),
+                _buildSectionTitle(context, 'Weight Analytics'),
+                const SizedBox(height: 15),
+                _buildWeightAnalyticsCard(context),
+                const SizedBox(height: 30),
+                _buildSectionTitle(context, 'Today\'s Stats: Chest & Biceps'),
+                const SizedBox(height: 15),
+                _buildTodayStatsCard(context),
+                const SizedBox(height: 30),
+                _buildSectionTitle(context, 'Workout Streak'),
+                const SizedBox(height: 15),
+                _buildWorkoutStreakCalendar(context, missedDays, today),
+              ],
             ),
           ),
-          headerStyle: const HeaderStyle(
-            formatButtonVisible: false,
-            titleCentered: true,
-            titleTextStyle: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
         ),
       ),
     );
   }
 
-  Widget _buildWeightChart(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.7,
-      child: LineChart(
-        LineChartData(
-          // ... Chart configuration goes here ...
-          // This is a placeholder for chart data
-           gridData: const FlGridData(show: false),
-           borderData: FlBorderData(show: false),
-           lineBarsData: [
-              LineChartBarData(
-                spots: const [
-                  FlSpot(0, 80),
-                  FlSpot(1, 81),
-                  FlSpot(2, 79),
-                  FlSpot(3, 78.5),
-                  FlSpot(4, 78),
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.displayMedium,
+    );
+  }
+
+  Widget _buildWeightAnalyticsCard(BuildContext context) {
+    final List<FlSpot> weightData = [
+      const FlSpot(0, 80),
+      const FlSpot(1, 81.5),
+      const FlSpot(2, 81),
+      const FlSpot(3, 79.5),
+      const FlSpot(4, 79),
+      const FlSpot(5, 79.2),
+    ];
+
+    if (weightData.isEmpty) {
+      return Card(
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(16),
+          child: SizedBox(
+            width: double.infinity,
+            height: 150,
+            child: Center(
+              child: Text(
+                'Log more to see your chart!\n(Tap here for details)',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+          child: AspectRatio(
+            aspectRatio: 1.7,
+            child: LineChart(
+              LineChartData(
+                gridData: const FlGridData(show: false),
+                titlesData: const FlTitlesData(show: false),
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: weightData,
+                    isCurved: true,
+                    color: Colors.white,
+                    barWidth: 4,
+                    isStrokeCapRound: true,
+                    dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: Colors.white.withOpacity(0.3),
+                    ),
+                  ),
                 ],
-                isCurved: true,
-                color: Theme.of(context).primaryColor,
-                barWidth: 4,
-                belowBarData: BarAreaData(show: true, color: Theme.of(context).primaryColor.withOpacity(0.3)),
-              )
-           ]
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildTodayStatsCard(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildStatItem(context, '0 / 1', 'Exercises Done'),
+            _buildStatItem(context, '0%', 'Completion'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(BuildContext context, String value, String label) {
+    return Column(
+      children: [
+        Text(value, style: Theme.of(context).textTheme.displayMedium),
+        const SizedBox(height: 4),
+        Text(label, style: Theme.of(context).textTheme.bodyMedium),
+      ],
+    );
+  }
+
+  Widget _buildWorkoutStreakCalendar(BuildContext context, Set<int> missedDays, DateTime today) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: TableCalendar(
+          firstDay: DateTime.utc(2025, 9, 1),
+          lastDay: DateTime.utc(2025, 9, 30),
+          focusedDay: today,
+          headerVisible: true,
+          calendarFormat: CalendarFormat.month,
+          headerStyle: HeaderStyle(
+            titleCentered: true,
+            formatButtonVisible: false,
+            titleTextStyle: Theme.of(context).textTheme.labelLarge!,
+            leftChevronVisible: false,
+            rightChevronVisible: false,
+          ),
+          daysOfWeekStyle: DaysOfWeekStyle(
+            weekdayStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+            weekendStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+          ),
+          calendarStyle: const CalendarStyle(
+            defaultTextStyle: TextStyle(color: Colors.white),
+            weekendTextStyle: TextStyle(color: Colors.white),
+            outsideDaysVisible: false,
+          ),
+          calendarBuilders: CalendarBuilders(
+            defaultBuilder: (context, day, focusedDay) {
+              if (missedDays.contains(day.day)) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('${day.day}', style: const TextStyle(color: Colors.white)),
+                    const SizedBox(height: 2),
+                    const Icon(Icons.close, color: Colors.red, size: 14),
+                  ],
+                );
+              }
+              return Center(
+                child: Text('${day.day}', style: const TextStyle(color: Colors.white)),
+              );
+            },
+          ),
         ),
       ),
     );
