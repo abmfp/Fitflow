@@ -1,10 +1,10 @@
 import 'package:fitflow/screens/exercise_library_screen.dart';
-import 'package:fitflow/screens/settings_screen.dart'; // Import settings screen
-import 'package:fitflow/services/user_service.dart'; // Import user service
+import 'package:fitflow/screens/settings_screen.dart';
+import 'package:fitflow/screens/workout_history_screen.dart'; // Import this screen
+import 'package:fitflow/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package.page_transition/page_transition.dart';
 
-// 1. Convert to StatefulWidget to listen for changes
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -15,21 +15,18 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final UserService _userService = UserService();
 
-  // 2. Add listener
   @override
   void initState() {
     super.initState();
     _userService.addListener(_onUserChanged);
   }
 
-  // 3. Remove listener
   @override
   void dispose() {
     _userService.removeListener(_onUserChanged);
     super.dispose();
   }
 
-  // 4. Rebuild the screen when username changes
   void _onUserChanged() {
     setState(() {});
   }
@@ -58,7 +55,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icons.history_rounded,
                 title: 'Workout Log',
                 subtitle: 'See your past workouts',
-                onTap: () {},
+                onTap: () {
+                  // This is the new link we just added
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: const WorkoutHistoryScreen(),
+                    ),
+                  );
+                },
               ),
               _buildOptionCard(
                 context,
@@ -66,7 +72,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: 'Settings',
                 subtitle: 'App preferences',
                 onTap: () {
-                  // 5. Navigate to the new Settings screen
                   Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const SettingsScreen()));
                 },
               ),
@@ -96,7 +101,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
         const SizedBox(width: 20),
-        // 6. Use the live username from the service
         Text('Hi ${_userService.username}!', style: Theme.of(context).textTheme.displayLarge),
       ],
     );
