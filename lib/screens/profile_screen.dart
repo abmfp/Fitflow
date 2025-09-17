@@ -1,4 +1,6 @@
+import 'package:fitflow/screens/exercise_library_screen.dart';
 import 'package:flutter/material.dart';
+import 'package.page_transition/page_transition.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -21,7 +23,15 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.list_alt_rounded,
                 title: 'Exercise Library',
                 subtitle: 'View all your exercises',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: const ExerciseLibraryScreen(),
+                    ),
+                  );
+                },
               ),
               _buildOptionCard(
                 context,
@@ -37,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
                 subtitle: 'App preferences',
                 onTap: () {},
               ),
-              
+
               // This Spacer pushes the logout button to the bottom
               const Spacer(),
 
@@ -87,7 +97,11 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // Reusable widget for the tappable option cards
-  Widget _buildOptionCard(BuildContext context, {required IconData icon, required String title, required String subtitle, required VoidCallback onTap}) {
+  Widget _buildOptionCard(BuildContext context,
+      {required IconData icon,
+      required String title,
+      required String subtitle,
+      required VoidCallback onTap}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: Card(
@@ -95,11 +109,14 @@ class ProfileScreen extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
             leading: Icon(icon, color: Colors.white, size: 28),
             title: Text(title, style: Theme.of(context).textTheme.labelLarge),
-            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
-            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+            subtitle:
+                Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+            trailing:
+                const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
           ),
         ),
       ),
@@ -116,8 +133,8 @@ class ProfileScreen extends StatelessWidget {
         child: Text(
           'Log Out',
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: Theme.of(context).colorScheme.error, // Using the color from our theme
-          ),
+                color: Theme.of(context).colorScheme.error,
+              ),
         ),
       ),
     );
