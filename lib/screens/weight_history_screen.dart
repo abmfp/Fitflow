@@ -1,20 +1,38 @@
+import 'package:fitflow/services/weight_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class WeightHistoryScreen extends StatelessWidget {
+class WeightHistoryScreen extends StatefulWidget {
   const WeightHistoryScreen({super.key});
 
-  // Sample data for the weight history list.
-  static final List<Map<String, dynamic>> _weightHistoryData = [
-    {'date': 'September 17, 2025', 'weight': 79.2},
-    {'date': 'September 16, 2025', 'weight': 79.0},
-    {'date': 'September 15, 2025', 'weight': 79.5},
-    {'date': 'September 14, 2025', 'weight': 81.0},
-    {'date': 'September 13, 2025', 'weight': 80.8},
-    {'date': 'September 12, 2025', 'weight': 81.5},
-  ];
+  @override
+  State<WeightHistoryScreen> createState() => _WeightHistoryScreenState();
+}
+
+class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
+  final WeightService _weightService = WeightService();
+
+  @override
+  void initState() {
+    super.initState();
+    _weightService.addListener(_onDataChanged);
+  }
+
+  @override
+  void dispose() {
+    _weightService.removeListener(_onDataChanged);
+    super.dispose();
+  }
+
+  void _onDataChanged() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Get the live data from the service
+    final history = _weightService.weightHistory;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Weight History'),
@@ -23,19 +41,19 @@ class WeightHistoryScreen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(20),
-        itemCount: _weightHistoryData.length,
+        itemCount: history.length,
         itemBuilder: (context, index) {
-          final entry = _weightHistoryData[index];
+          final entry = history[index];
           return Card(
             margin: const EdgeInsets.only(bottom: 15),
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               title: Text(
-                entry['date'],
+                DateFormat('MMMM d, yyyy').format(entry.date),
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
               ),
               trailing: Text(
-                '${entry['weight']} kg',
+                '${entry.weight} kg',
                 style: Theme.of(context).textTheme.labelLarge,
               ),
             ),
