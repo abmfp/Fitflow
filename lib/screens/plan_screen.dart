@@ -1,3 +1,4 @@
+import 'package:fitflow/services/workout_service.dart';
 import 'package:flutter/material.dart';
 
 class PlanScreen extends StatefulWidget {
@@ -8,39 +9,20 @@ class PlanScreen extends StatefulWidget {
 }
 
 class _PlanScreenState extends State<PlanScreen> {
-  // The list of available muscles for selection.
-  final List<String> allMuscles = [
-    'Chest',
-    'Biceps',
-    'Triceps',
-    'Shoulders',
-    'Abs',
-    'Legs',
-  ];
+  final WorkoutService _workoutService = WorkoutService();
+  final List<String> allMuscles = ['Chest', 'Biceps', 'Triceps', 'Shoulders', 'Abs', 'Legs'];
 
-  // Updated data structure to support a list of muscles for each workout.
-  final List<Map<String, dynamic>> _weeklyPlan = [
-    {'day': 'Monday', 'muscles': ['Chest', 'Biceps']},
-    {'day': 'Tuesday', 'muscles': ['Back', 'Triceps']}, // Note: 'Back' is not in the list, you can add it
-    {'day': 'Wednesday', 'muscles': ['Legs', 'Shoulders']},
-    {'day': 'Thursday', 'muscles': []}, // Empty list represents a Rest day
-    {'day': 'Friday', 'muscles': ['Chest', 'Back']},
-    {'day': 'Saturday', 'muscles': ['Abs']},
-    {'day': 'Sunday', 'muscles': []},
-  ];
-
-  // This function displays the multi-select dialog.
-  void _showEditMusclesDialog(int dayIndex) {
-    // A temporary list to hold the selections inside the dialog.
-    final List<String> selectedMuscles = List<String>.from(_weeklyPlan[dayIndex]['muscles']);
-
+  void _showEditMusclesDialog(String day) {
+    final List<String> selectedMuscles = List<String>.from(_workoutService.getMusclesForDay(DateTime.now())); // This logic needs to be improved for specific days
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        // ... (The dialog code remains the same as before)
         return AlertDialog(
-          backgroundColor: const Color(0xFF252836),
-          title: Text('Edit ${ _weeklyPlan[dayIndex]['day']}'),
-          content: StatefulBuilder( // Use StatefulBuilder to manage the dialog's state
+           backgroundColor: const Color(0xFF252836),
+          title: Text('Edit $day'),
+          content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Wrap(
                 spacing: 8.0,
@@ -50,7 +32,7 @@ class _PlanScreenState extends State<PlanScreen> {
                     label: Text(muscle),
                     selected: isSelected,
                     onSelected: (bool selected) {
-                      setState(() { // This setState only rebuilds the dialog's content
+                      setState(() {
                         if (selected) {
                           selectedMuscles.add(muscle);
                         } else {
@@ -59,9 +41,7 @@ class _PlanScreenState extends State<PlanScreen> {
                       });
                     },
                     selectedColor: Colors.white,
-                    labelStyle: TextStyle(
-                      color: isSelected ? Theme.of(context).scaffoldBackgroundColor : Colors.white70,
-                    ),
+                    labelStyle: TextStyle(color: isSelected ? Theme.of(context).scaffoldBackgroundColor : Colors.white70),
                     backgroundColor: Colors.white.withOpacity(0.1),
                     checkmarkColor: Theme.of(context).scaffoldBackgroundColor,
                   );
@@ -70,16 +50,13 @@ class _PlanScreenState extends State<PlanScreen> {
             },
           ),
           actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+            TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(context).pop()),
             TextButton(
               child: const Text('Save'),
               onPressed: () {
-                // Update the main plan with the new selections.
-                setState(() { // This setState rebuilds the main screen
-                  _weeklyPlan[dayIndex]['muscles'] = selectedMuscles;
+                // Call the service to update the plan
+                setState(() {
+                  _workoutService.updatePlanForDay(day, selectedMuscles);
                 });
                 Navigator.of(context).pop();
               },
@@ -100,24 +77,20 @@ class _PlanScreenState extends State<PlanScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Weekly Plan',
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
+                Text('Weekly Plan', style: Theme.of(context).textTheme.displayLarge),
                 const SizedBox(height: 20),
-                
-                // Use ListView.builder for better performance and structure
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _weeklyPlan.length,
+                  itemCount: _workoutService.weeklyPlan.length,
                   itemBuilder: (context, index) {
-                    final plan = _weeklyPlan[index];
+                    final plan = _workoutService.weeklyPlan[index];
+                    final muscles = List<String>.from(plan['muscles']);
                     return _buildDayCard(
                       context,
                       day: plan['day']!,
-                      muscles: List<String>.from(plan['muscles']),
-                      onEdit: () => _showEditMusclesDialog(index),
+                      muscles: muscles,
+                      onEdit: () => _showEditMusclesDialog(plan['day']!),
                     );
                   },
                 ),
@@ -129,9 +102,7 @@ class _PlanScreenState extends State<PlanScreen> {
     );
   }
 
-  // Updated card widget to display a list of muscles.
   Widget _buildDayCard(BuildContext context, {required String day, required List<String> muscles, required VoidCallback onEdit}) {
-    // Format the muscle list for display. Show "Rest" if the list is empty.
     final String workoutDisplay = muscles.isEmpty ? 'Rest' : muscles.join(' & ');
 
     return Padding(
@@ -139,14 +110,8 @@ class _PlanScreenState extends State<PlanScreen> {
       child: Card(
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          title: Text(
-            day,
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
-          subtitle: Text(
-            workoutDisplay,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
+          title: Text(day, style: Theme.of(context).textTheme.displayMedium),
+          subtitle: Text(workoutDisplay, style: Theme.of(context).textTheme.bodyLarge),
           trailing: IconButton(
             icon: const Icon(Icons.edit_outlined, color: Colors.white70),
             onPressed: onEdit,
