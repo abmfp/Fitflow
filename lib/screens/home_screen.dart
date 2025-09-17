@@ -1,13 +1,18 @@
+import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/services/weight_service.dart'; // Import the new service
+import 'package:fitflow/services/weight_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package.page_transition/page_transition.dart';
 import 'workout_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  // 1. Accept the navigation function
+  final VoidCallback onNavigateToProgress;
+
+  const HomeScreen({super.key, required this.onNavigateToProgress});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -15,21 +20,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final WorkoutService _workoutService = WorkoutService();
   final UserService _userService = UserService();
-  final WeightService _weightService = WeightService(); // Add weight service instance
+  final WeightService _weightService = WeightService();
 
   @override
   void initState() {
     super.initState();
     _workoutService.addListener(_onDataChanged);
     _userService.addListener(_onDataChanged);
-    _weightService.addListener(_onDataChanged); // Add listener for weight service
+    _weightService.addListener(_onDataChanged);
   }
 
   @override
   void dispose() {
     _workoutService.removeListener(_onDataChanged);
     _userService.removeListener(_onDataChanged);
-    _weightService.removeListener(_onDataChanged); // Remove listener for weight service
+    _weightService.removeListener(_onDataChanged);
     super.dispose();
   }
 
@@ -37,43 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
-  // This function shows the dialog to add weight
   void _showAddWeightDialog(BuildContext context) {
-    final TextEditingController weightController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Log Your Weight'),
-        content: TextField(
-          controller: weightController,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Weight (kg)',
-            suffixText: 'kg',
-          ),
-        ),
-        actions: [
-          TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(ctx).pop()),
-          TextButton(
-            child: const Text('Save'),
-            onPressed: () {
-              final double? weight = double.tryParse(weightController.text);
-              if (weight != null) {
-                _weightService.addWeight(weight);
-              }
-              Navigator.of(ctx).pop();
-            },
-          ),
-        ],
-      ),
-    );
+    // ... same as before
   }
 
   @override
   Widget build(BuildContext context) {
-    // ... (build method first part is the same)
-    // Find the _buildInfoCard for weight and update it
+    final DateTime today = DateTime.now();
+    final List<String> todaysMuscles = _workoutService.getMusclesForDay(today);
+    final String workoutTitle = todaysMuscles.isEmpty ? "Rest Day" : todaysMuscles.join(' & ');
+    final String exerciseCount = todaysMuscles.length.toString();
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -82,27 +61,45 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildDateSelector(DateTime.now()),
+                _buildDateSelector(today),
                 const SizedBox(height: 24),
-                Padding( /* ... */ ),
-                Padding( /* ... */ ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Text('Get ready, ${_userService.username}', style: Theme.of(context).textTheme.displayLarge),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Text('Here\'s your plan for ${DateFormat('EEEE').format(today)}', style: Theme.of(context).textTheme.bodyLarge),
+                ),
                 const SizedBox(height: 24),
-                // This card is DYNAMIC!
-                _buildWorkoutCard(context, /* ... */),
+                _buildWorkoutCard(context, workoutTitle, exerciseCount),
                 const SizedBox(height: 16),
-                // This is the updated weight card
+                
+                // 2. Updated the 'Weight' card to be tappable
                 _buildInfoCard(
                   context,
                   icon: Icons.monitor_weight_outlined,
-                  title: 'Weight for ${DateFormat('d MMM').format(DateTime.now())}',
-                  subtitle: 'No Entry', // This could be made dynamic too!
+                  title: 'Weight for ${DateFormat('d MMM').format(today)}',
+                  subtitle: 'View your history', // Updated subtitle
                   trailing: IconButton(
                     icon: const Icon(Icons.add, color: Colors.white),
                     onPressed: () => _showAddWeightDialog(context),
                   ),
+                  onTap: () {
+                    Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
+                  },
                 ),
+                
                 const SizedBox(height: 16),
-                _buildInfoCard( /* ... */ ),
+
+                // 3. Updated the 'Day' card to be tappable
+                _buildInfoCard(
+                  context,
+                  icon: Icons.local_fire_department_outlined,
+                  title: 'Day 0 / 5',
+                  subtitle: 'View your progress', // Updated subtitle
+                  onTap: widget.onNavigateToProgress, // Use the passed-in function
+                ),
               ],
             ),
           ),
@@ -110,6 +107,27 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  // The rest of your HomeScreen code (_buildWorkoutCard, etc.) remains the same.
-  // ...
+
+  // 4. Modified the _buildInfoCard helper to accept an onTap function
+  Widget _buildInfoCard(BuildContext context, {required IconData icon, required String title, required String subtitle, Widget? trailing, VoidCallback? onTap}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: ListTile(
+            leading: Icon(icon, color: Colors.white, size: 28),
+            title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+            trailing: trailing,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ... (the rest of your HomeScreen code remains the same)
+  Widget _buildWorkoutCard(BuildContext context, String title, String count) { /* ... */ }
+  Widget _buildDateSelector(DateTime selectedDate) { /* ... */ }
 }
