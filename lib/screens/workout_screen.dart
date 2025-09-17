@@ -1,11 +1,5 @@
+import 'package:fitflow/services/workout_service.dart'; // Import the service
 import 'package:flutter/material.dart';
-
-class Exercise {
-  final String name;
-  bool isCompleted;
-
-  Exercise({required this.name, this.isCompleted = false});
-}
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -15,18 +9,16 @@ class WorkoutScreen extends StatefulWidget {
 }
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
-  final List<Exercise> _exercises = [
-    Exercise(name: 'Bench Press'),
-    Exercise(name: 'Incline Dumbbell Press'),
-    Exercise(name: 'Dumbbell Bicep Curls'),
-    Exercise(name: 'Hammer Curls'),
-  ];
+  // Get the single instance of our workout service.
+  final WorkoutService _workoutService = WorkoutService();
 
-  // This function marks all exercises as complete.
   void _quickLogWorkout() {
     setState(() {
-      for (final exercise in _exercises) {
-        exercise.isCompleted = true;
+      for (final exercise in _workoutService.todaysExercises) {
+        // Only update if it's not already complete, to avoid unnecessary notifications.
+        if (!exercise.isCompleted) {
+          _workoutService.toggleExerciseCompletion(exercise);
+        }
       }
     });
   }
@@ -39,7 +31,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      // NEW: A button is added to the bottom of the screen.
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ElevatedButton(
@@ -48,11 +39,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             backgroundColor: Colors.white,
             foregroundColor: Theme.of(context).scaffoldBackgroundColor,
           ),
-          onPressed: _quickLogWorkout, // This calls the function to complete all exercises.
-          child: const Text(
-            'Quick Log',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+          onPressed: _quickLogWorkout,
+          child: const Text('Quick Log', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
       ),
       body: Container(
@@ -60,11 +48,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         height: double.infinity,
         color: Theme.of(context).scaffoldBackgroundColor,
         child: ReorderableListView.builder(
-          // Adjust bottom padding to ensure the list doesn't go under the button.
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
-          itemCount: _exercises.length,
+          // Use the exercise list from the service
+          itemCount: _workoutService.todaysExercises.length,
           itemBuilder: (context, index) {
-            final exercise = _exercises[index];
+            final exercise = _workoutService.todaysExercises[index];
             return Card(
               key: Key(exercise.name),
               margin: const EdgeInsets.only(bottom: 15),
@@ -72,16 +60,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 title: Text(
                   exercise.name,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        decoration: exercise.isCompleted
-                            ? TextDecoration.lineThrough
-                            : null,
+                        decoration: exercise.isCompleted ? TextDecoration.lineThrough : null,
                       ),
                 ),
                 value: exercise.isCompleted,
                 onChanged: (bool? value) {
-                  setState(() {
-                    exercise.isCompleted = value ?? false;
-                  });
+                  // When the checkbox is tapped, call the service method
+                  _workoutService.toggleExerciseCompletion(exercise);
                 },
                 activeColor: Colors.white,
                 checkColor: Theme.of(context).scaffoldBackgroundColor,
@@ -91,11 +76,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           },
           onReorder: (int oldIndex, int newIndex) {
             setState(() {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              final Exercise item = _exercises.removeAt(oldIndex);
-              _exercises.insert(newIndex, item);
+              if (oldIndex < newIndex) newIndex -= 1;
+              final Exercise item = _workoutService.todaysExercises.removeAt(oldIndex);
+              _workoutService.todaysExercises.insert(newIndex, item);
             });
           },
         ),
