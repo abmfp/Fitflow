@@ -1,4 +1,7 @@
+import 'package:fitflow/screens/workout_detail_screen.dart';
+import 'package:fitflow/services/workout_service.dart';
 import 'package:flutter/material.dart';
+import 'packagepackage:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
@@ -12,11 +15,17 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  // Sample data: A map where the key is the date and the value is a list of exercises.
-  final Map<DateTime, List<String>> _workoutHistory = {
-    DateTime.utc(2025, 9, 15): ['Bench Press', 'Incline Dumbbell Press', 'Bicep Curls'],
-    DateTime.utc(2025, 9, 13): ['Squats', 'Leg Press', 'Shoulder Press'],
-    DateTime.utc(2025, 9, 11): ['Deadlifts', 'Pull-ups', 'Tricep Pushdowns'],
+  // 1. Updated data structure to hold full Exercise objects, not just names.
+  final Map<DateTime, List<Exercise>> _workoutHistory = {
+    DateTime.utc(2025, 9, 15): [
+      Exercise(name: 'Bench Press', description: 'A core compound exercise for chest development.'),
+      Exercise(name: 'Incline Dumbbell Press', description: 'Targets the upper portion of the pectoral muscles.'),
+      Exercise(name: 'Bicep Curls', description: 'An isolation exercise for the biceps.'),
+    ],
+    DateTime.utc(2025, 9, 13): [
+      Exercise(name: 'Squats', description: 'The king of all leg exercises, targeting quads, hamstrings, and glutes.'),
+      Exercise(name: 'Leg Press', description: 'A compound machine exercise for overall leg development.'),
+    ],
   };
 
   @override
@@ -25,8 +34,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
     _selectedDay = _focusedDay;
   }
 
-  List<String> _getWorkoutsForDay(DateTime day) {
-    // Retrieve workouts for the selected day.
+  List<Exercise> _getWorkoutsForDay(DateTime day) {
     return _workoutHistory[DateTime.utc(day.year, day.month, day.day)] ?? [];
   }
 
@@ -42,7 +50,6 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
       ),
       body: Column(
         children: [
-          // The interactive calendar
           Card(
             margin: const EdgeInsets.all(20),
             child: TableCalendar(
@@ -53,38 +60,22 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
               onDaySelected: (selectedDay, focusedDay) {
                 setState(() {
                   _selectedDay = selectedDay;
-                  _focusedDay = focusedDay; // update focused day as well
+                  _focusedDay = focusedDay;
                 });
               },
               calendarStyle: CalendarStyle(
-                todayDecoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
-                  shape: BoxShape.circle,
-                ),
-                selectedDecoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
+                todayDecoration: BoxDecoration(color: Colors.white.withOpacity(0.3), shape: BoxShape.circle),
+                selectedDecoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                 selectedTextStyle: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
               ),
-               headerStyle: const HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-              ),
+              headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
             ),
           ),
-          
-          // Title for the workout list
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              "Workout on selected day:",
-              style: Theme.of(context).textTheme.displayMedium,
-            ),
+            child: Text("Workout on selected day:", style: Theme.of(context).textTheme.displayMedium),
           ),
           const SizedBox(height: 10),
-
-          // The list of workouts for the selected day
           Expanded(
             child: workoutsForSelectedDay.isEmpty
                 ? const Center(child: Text("No workout logged for this day."))
@@ -92,10 +83,26 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemCount: workoutsForSelectedDay.length,
                     itemBuilder: (context, index) {
+                      final exercise = workoutsForSelectedDay[index];
+                      // 2. Wrap the Card in an InkWell to make it tappable
                       return Card(
                         margin: const EdgeInsets.only(bottom: 10),
-                        child: ListTile(
-                          title: Text(workoutsForSelectedDay[index]),
+                        child: InkWell(
+                          onTap: () {
+                            // 3. Navigate to the detail screen, passing the specific exercise
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.fade,
+                                child: WorkoutDetailScreen(exercise: exercise),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: ListTile(
+                            title: Text(exercise.name),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                          ),
                         ),
                       );
                     },
