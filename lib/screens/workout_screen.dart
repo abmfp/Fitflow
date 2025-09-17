@@ -1,5 +1,3 @@
-// lib/screens/workout_screen.dart
-import 'package:fitflow/widgets/gradient_background.dart';
 import 'package:flutter/material.dart';
 
 class Exercise {
@@ -17,32 +15,32 @@ class WorkoutScreen extends StatefulWidget {
 }
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
-  // Sample list of exercises
   final List<Exercise> _exercises = [
     Exercise(name: 'Bench Press'),
     Exercise(name: 'Incline Dumbbell Press'),
-    Exercise(name: 'Tricep Pushdowns'),
-    Exercise(name: 'Overhead Tricep Extension'),
+    Exercise(name: 'Dumbbell Bicep Curls'),
+    Exercise(name: 'Hammer Curls'),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chest & Triceps'),
+        title: const Text('Chest & Biceps'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: GradientBackground(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: ListView.builder(
           padding: const EdgeInsets.all(20),
           itemCount: _exercises.length,
           itemBuilder: (context, index) {
             final exercise = _exercises[index];
             return Card(
-              color: Colors.white.withOpacity(0.15),
               margin: const EdgeInsets.only(bottom: 15),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: CheckboxListTile(
                 title: Text(
                   exercise.name,
@@ -56,8 +54,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     exercise.isCompleted = value ?? false;
                   });
                 },
-                activeColor: Theme.of(context).primaryColor,
-                checkColor: Colors.white,
+                activeColor: Colors.white,
+                checkColor: Theme.of(context).scaffoldBackgroundColor,
                 controlAffinity: ListTileControlAffinity.leading,
               ),
             );
