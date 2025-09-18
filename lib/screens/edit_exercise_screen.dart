@@ -1,4 +1,4 @@
-import 'package:fitflow/screens/exercise_library_screen.dart'; // We need the CustomExercise model
+// We need the CustomExercise model
 import 'package:flutter/material.dart';
 
 class EditExerciseScreen extends StatefulWidget {

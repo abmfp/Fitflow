@@ -1,4 +1,3 @@
-import 'package:fitflow/screens/edit_exercise_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:flutter/material.dart';
 import 'package.page_transition/page_transition.dart';

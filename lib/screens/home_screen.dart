@@ -5,7 +5,6 @@ import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
-import 'workout_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToProgress;
