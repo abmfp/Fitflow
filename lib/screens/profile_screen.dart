@@ -1,9 +1,9 @@
-import 'package.fitflow/screens/exercise_library_screen.dart';
-import 'package.fitflow/screens/settings_screen.dart';
-import 'package.fitflow/screens/workout_history_screen.dart';
-import 'package.fitflow/services/user_service.dart';
-import 'package.flutter/material.dart';
-import 'package.page_transition/page_transition.dart'; // <-- ADD THIS IMPORT
+import 'package:fitflow/screens/exercise_library_screen.dart';
+import 'package:fitflow/screens/settings_screen.dart';
+import 'package:fitflow/screens/workout_history_screen.dart';
+import 'package:fitflow/services/user_service.dart';
+import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
+import 'package:page_transition/page_transition.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,7 +13,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // ... The rest of the file is the same as before ...
   final UserService _userService = UserService();
 
   @override
@@ -134,4 +133,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-
