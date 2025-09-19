@@ -1,9 +1,9 @@
-import 'package:fitflow/screens/exercise_library_screen.dart';
-import 'package:fitflow/screens/settings_screen.dart';
-import 'package:fitflow/screens/workout_history_screen.dart'; // Import this screen
-import 'package:fitflow/services/user_service.dart';
-import 'package:flutter/material.dart';
-import 'package.page_transition/page_transition.dart';
+import 'package.fitflow/screens/exercise_library_screen.dart';
+import 'package.fitflow/screens/settings_screen.dart';
+import 'package.fitflow/screens/workout_history_screen.dart';
+import 'package.fitflow/services/user_service.dart';
+import 'package.flutter/material.dart';
+import 'package.page_transition/page_transition.dart'; // <-- ADD THIS IMPORT
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,6 +13,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  // ... The rest of the file is the same as before ...
   final UserService _userService = UserService();
 
   @override
@@ -56,7 +57,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: 'Workout Log',
                 subtitle: 'See your past workouts',
                 onTap: () {
-                  // This is the new link we just added
                   Navigator.push(
                     context,
                     PageTransition(
@@ -134,3 +134,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
