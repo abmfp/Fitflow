@@ -1,10 +1,11 @@
+import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/services/weight_service.dart';
-import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
+import 'workout_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToProgress;
@@ -42,7 +43,35 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showAddWeightDialog(BuildContext context) {
-    // ... dialog code is the same ...
+    final TextEditingController weightController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Log Your Weight'),
+        content: TextField(
+          controller: weightController,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Weight (kg)',
+            suffixText: 'kg',
+          ),
+        ),
+        actions: [
+          TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(ctx).pop()),
+          TextButton(
+            child: const Text('Save'),
+            onPressed: () {
+              final double? weight = double.tryParse(weightController.text);
+              if (weight != null) {
+                _weightService.addWeight(weight);
+              }
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -102,5 +131,85 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ... all helper widgets (_buildWorkoutCard, _buildInfoCard, _buildDateSelector) are the same ...
+  Widget _buildWorkoutCard(BuildContext context, String title, String count) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Card(
+        child: InkWell(
+          onTap: () {
+            _workoutService.startWorkoutForDay(DateTime.now());
+            Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WorkoutScreen()));
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: Theme.of(context).textTheme.displayMedium),
+                    const SizedBox(height: 4),
+                    Text('$count exercises', style: Theme.of(context).textTheme.bodyMedium),
+                  ],
+                ),
+                const Icon(Icons.arrow_forward_ios, color: Colors.white),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateSelector(DateTime selectedDate) {
+    return SizedBox(
+      height: 70,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 7,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        itemBuilder: (context, index) {
+          final date = DateTime.now().add(Duration(days: index - 3));
+          final isSelected = date.day == selectedDate.day;
+          return Container(
+            width: 60,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.white : Colors.transparent,
+              borderRadius: BorderRadius.circular(30),
+              border: isSelected ? null : Border.all(color: Colors.white24),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(DateFormat('E').format(date).substring(0, 3), style: TextStyle(color: isSelected ? Theme.of(context).scaffoldBackgroundColor : Colors.white70, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(DateFormat('d').format(date), style: TextStyle(color: isSelected ? Theme.of(context).scaffoldBackgroundColor : Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(BuildContext context, {required IconData icon, required String title, required String subtitle, Widget? trailing, VoidCallback? onTap}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: ListTile(
+            leading: Icon(icon, color: Colors.white, size: 28),
+            title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+            trailing: trailing,
+          ),
+        ),
+      ),
+    );
+  }
 }
