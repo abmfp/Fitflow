@@ -1,8 +1,7 @@
-// We need the CustomExercise model
-import 'package:flutter/material.dart';
+import 'package.fitflow/services/workout_service.dart'; // <-- ADD THIS IMPORT
+import 'package.flutter/material.dart';
 
 class EditExerciseScreen extends StatefulWidget {
-  // If an exercise is passed, we're in "Edit" mode. If it's null, we're in "Add" mode.
   final CustomExercise? initialExercise;
 
   const EditExerciseScreen({super.key, this.initialExercise});
@@ -12,6 +11,7 @@ class EditExerciseScreen extends StatefulWidget {
 }
 
 class _EditExerciseScreenState extends State<EditExerciseScreen> {
+  // ... The rest of the file is the same as before ...
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late String _selectedMuscle;
@@ -35,9 +35,6 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
   }
 
   void _saveExercise() {
-    // In a real app, you would save this data to a database.
-    // For now, we'll just pop the screen.
-    // In the next step, we'll pass the data back to the library screen.
     Navigator.of(context).pop();
   }
 
@@ -49,12 +46,10 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
-          // Only show the delete icon in Edit mode
           if (_isEditMode)
             IconButton(
               icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
               onPressed: () {
-                // TODO: Implement delete confirmation and logic
                 Navigator.of(context).pop();
               },
             ),
@@ -71,7 +66,6 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
             const SizedBox(height: 15),
             _buildDropdown(),
             const SizedBox(height: 15),
-            // A Row for Sets and Reps
             Row(
               children: [
                 Expanded(child: _buildTextField(label: 'Sets', keyboardType: TextInputType.number)),
@@ -80,7 +74,6 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
               ],
             ),
             const SizedBox(height: 30),
-            // A Row for Image and Video buttons
             Row(
               children: [
                 Expanded(child: _buildMediaButton(icon: Icons.image_outlined, label: 'Add Image')),
@@ -104,7 +97,6 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     );
   }
 
-  // Reusable widget for text fields to keep the code clean
   Widget _buildTextField({TextEditingController? controller, required String label, int maxLines = 1, TextInputType? keyboardType}) {
     return TextFormField(
       controller: controller,
@@ -122,7 +114,6 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     );
   }
   
-  // Widget for the muscle group dropdown
   Widget _buildDropdown() {
     return DropdownButtonFormField<String>(
       value: _selectedMuscle,
@@ -148,7 +139,6 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     );
   }
 
-  // Reusable widget for the media buttons
   Widget _buildMediaButton({required IconData icon, required String label}) {
     return OutlinedButton.icon(
       onPressed: () {},
