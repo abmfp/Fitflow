@@ -1,5 +1,5 @@
-import 'package.fitflow/services/workout_service.dart'; // <-- ADD THIS IMPORT
-import 'package.flutter/material.dart';
+import 'package:fitflow/services/workout_service.dart';
+import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
 
 class EditExerciseScreen extends StatefulWidget {
   final CustomExercise? initialExercise;
@@ -11,7 +11,6 @@ class EditExerciseScreen extends StatefulWidget {
 }
 
 class _EditExerciseScreenState extends State<EditExerciseScreen> {
-  // ... The rest of the file is the same as before ...
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late String _selectedMuscle;
@@ -23,7 +22,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialExercise?.name ?? '');
-    _descriptionController = TextEditingController(); // Description is optional
+    _descriptionController = TextEditingController();
     _selectedMuscle = widget.initialExercise?.muscleGroup ?? _muscleGroups.first;
   }
 
