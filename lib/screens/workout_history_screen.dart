@@ -1,6 +1,7 @@
+import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:flutter/material.dart';
-import 'package.page_transition/page_transition.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
@@ -32,7 +33,6 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
   }
 
   List<Exercise> _getWorkoutsForDay(DateTime day) {
-    // Get live data from the service
     return _workoutService.workoutHistory[DateTime.utc(day.year, day.month, day.day)] ?? [];
   }
 
@@ -61,7 +61,6 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                   _focusedDay = focusedDay;
                 });
               },
-              // Add an event loader to mark days with workouts
               eventLoader: _getWorkoutsForDay,
               calendarStyle: CalendarStyle(
                 todayDecoration: BoxDecoration(color: Colors.white.withOpacity(0.3), shape: BoxShape.circle),
@@ -80,7 +79,29 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
           Expanded(
             child: workoutsForSelectedDay.isEmpty
                 ? const Center(child: Text("No workout logged for this day."))
-                : ListView.builder( /* ... same as before ... */ ),
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: workoutsForSelectedDay.length,
+                    itemBuilder: (context, index) {
+                      final exercise = workoutsForSelectedDay[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: ListTile(
+                            title: Text(exercise.name),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
