@@ -2,7 +2,8 @@ import 'package:fitflow/screens/exercise_library_screen.dart';
 import 'package:fitflow/screens/settings_screen.dart';
 import 'package:fitflow/screens/workout_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
-import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
+import 'package:fitflow/widgets/gradient_container.dart';
+import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -34,49 +35,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              _buildProfileHeader(context),
-              const SizedBox(height: 40),
-              _buildOptionCard(
-                context,
-                icon: Icons.list_alt_rounded,
-                title: 'Exercise Library',
-                subtitle: 'View all your exercises',
-                onTap: () {
-                  Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const ExerciseLibraryScreen()));
-                },
-              ),
-              _buildOptionCard(
-                context,
-                icon: Icons.history_rounded,
-                title: 'Workout Log',
-                subtitle: 'See your past workouts',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: const WorkoutHistoryScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildOptionCard(
-                context,
-                icon: Icons.settings_rounded,
-                title: 'Settings',
-                subtitle: 'App preferences',
-                onTap: () {
-                  Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const SettingsScreen()));
-                },
-              ),
-              const Spacer(),
-              _buildLogoutButton(context),
-            ],
+      body: GradientContainer(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                _buildProfileHeader(context),
+                const SizedBox(height: 40),
+                _buildOptionCard(
+                  context,
+                  icon: Icons.list_alt_rounded,
+                  title: 'Exercise Library',
+                  subtitle: 'View all your exercises',
+                  onTap: () {
+                    Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const ExerciseLibraryScreen()));
+                  },
+                ),
+                _buildOptionCard(
+                  context,
+                  icon: Icons.history_rounded,
+                  title: 'Workout Log',
+                  subtitle: 'See your past workouts',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: const WorkoutHistoryScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _buildOptionCard(
+                  context,
+                  icon: Icons.settings_rounded,
+                  title: 'Settings',
+                  subtitle: 'App preferences',
+                  onTap: () {
+                    Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const SettingsScreen()));
+                  },
+                ),
+                const Spacer(),
+                _buildLogoutButton(context),
+              ],
+            ),
           ),
         ),
       ),
