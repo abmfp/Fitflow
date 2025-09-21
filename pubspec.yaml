@@ -19,6 +19,7 @@ dependencies:
   fl_chart: ^0.64.0
   intl: ^0.18.1
   google_fonts: ^6.2.1
+  flutter_animate: ^4.5.0
 
   # Local Database (Persistence)
   hive: ^2.2.3
