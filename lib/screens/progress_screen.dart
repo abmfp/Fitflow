@@ -2,6 +2,7 @@ import 'package:fitflow/services/weight_service.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:fitflow/screens/workout_history_screen.dart';
+import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -33,7 +34,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   void _onDataChanged() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -42,28 +45,29 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final today = DateTime.utc(2025, 9, 17);
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Your Progress',
-                    style: Theme.of(context).textTheme.displayLarge),
-                const SizedBox(height: 30),
-                _buildSectionTitle(context, 'Weight Analytics'),
-                const SizedBox(height: 15),
-                _buildWeightAnalyticsCard(context),
-                const SizedBox(height: 30),
-                _buildSectionTitle(context, 'Today\'s Stats: Chest & Biceps'),
-                const SizedBox(height: 15),
-                _buildTodayStatsCard(context),
-                const SizedBox(height: 30),
-                _buildSectionTitle(context, 'Workout Streak'),
-                const SizedBox(height: 15),
-                _buildWorkoutStreakCalendar(context, missedDays, today),
-              ],
+      body: GradientContainer(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Your Progress', style: Theme.of(context).textTheme.displayLarge),
+                  const SizedBox(height: 30),
+                  _buildSectionTitle(context, 'Weight Analytics'),
+                  const SizedBox(height: 15),
+                  _buildWeightAnalyticsCard(context),
+                  const SizedBox(height: 30),
+                  _buildSectionTitle(context, 'Today\'s Stats'),
+                  const SizedBox(height: 15),
+                  _buildTodayStatsCard(context),
+                  const SizedBox(height: 30),
+                  _buildSectionTitle(context, 'Workout Streak'),
+                  const SizedBox(height: 15),
+                  _buildWorkoutStreakCalendar(context, missedDays, today),
+                ],
+              ),
             ),
           ),
         ),
@@ -99,8 +103,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               child: Text(
                 'Log more to see your chart!\n(Tap here for details)',
                 textAlign: TextAlign.center,
-                style:
-                    Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
               ),
             ),
           ),
@@ -176,8 +179,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Widget _buildWorkoutStreakCalendar(
-      BuildContext context, Set<int> missedDays, DateTime today) {
+  Widget _buildWorkoutStreakCalendar(BuildContext context, Set<int> missedDays, DateTime today) {
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -218,8 +220,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('${day.day}',
-                          style: const TextStyle(color: Colors.white)),
+                      Text('${day.day}', style: const TextStyle(color: Colors.white)),
                       const SizedBox(height: 2),
                       const Icon(Icons.close, color: Colors.red, size: 14),
                     ],
