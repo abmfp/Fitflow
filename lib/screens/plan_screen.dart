@@ -1,5 +1,6 @@
 import 'package:fitflow/screens/plan_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -69,41 +70,43 @@ class _PlanScreenState extends State<PlanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Weekly Plan', style: Theme.of(context).textTheme.displayLarge),
-                const SizedBox(height: 20),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _workoutService.weeklyPlan.length,
-                  itemBuilder: (context, index) {
-                    final plan = _workoutService.weeklyPlan[index];
-                    final day = plan['day']!;
-                    final muscles = List<String>.from(plan['muscles']);
-                    return _buildDayCard(
-                      context,
-                      day: day,
-                      muscles: muscles,
-                      onEdit: () => _showEditMusclesDialog(day),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.rightToLeft,
-                            child: PlanDetailScreen(day: day, muscles: muscles),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
+      body: GradientContainer(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Weekly Plan', style: Theme.of(context).textTheme.displayLarge),
+                  const SizedBox(height: 20),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _workoutService.weeklyPlan.length,
+                    itemBuilder: (context, index) {
+                      final plan = _workoutService.weeklyPlan[index];
+                      final day = plan['day']!;
+                      final muscles = List<String>.from(plan['muscles']);
+                      return _buildDayCard(
+                        context,
+                        day: day,
+                        muscles: muscles,
+                        onEdit: () => _showEditMusclesDialog(day),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeft,
+                              child: PlanDetailScreen(day: day, muscles: muscles),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
