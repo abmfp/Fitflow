@@ -1,5 +1,6 @@
 import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -56,14 +57,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           child: const Text('Finish Workout', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Theme.of(context).scaffoldBackgroundColor,
+      body: GradientContainer(
         child: _workoutService.todaysExercises.isEmpty
             ? const Center(child: Text("No workout started."))
             : ReorderableListView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
                 itemCount: _workoutService.todaysExercises.length,
                 itemBuilder: (context, index) {
                   final exercise = _workoutService.todaysExercises[index];
@@ -80,7 +78,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           ),
                         );
                       },
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(20),
                       child: CheckboxListTile(
                         title: Text(
                           exercise.name,
@@ -93,7 +91,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                           _workoutService.toggleExerciseCompletion(exercise);
                         },
                         activeColor: Colors.white,
-                        checkColor: Theme.of(context).scaffoldBackgroundColor,
+                        checkColor: const Color(0xFF1F1D2B),
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
                     ),
