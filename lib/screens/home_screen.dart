@@ -137,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
               
               GlassCard(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 onTap: () {
                   Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
                 },
@@ -153,6 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
               
               GlassCard(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 onTap: widget.onNavigateToProgress,
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -169,6 +171,45 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDateSelector(DateTime selectedDate) {
-    // ... same as before
+    return SizedBox(
+      height: 70,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 7,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemBuilder: (context, index) {
+          final date = DateTime.now().add(Duration(days: index - 3));
+          final isSelected = date.day == selectedDate.day && date.month == selectedDate.month;
+          const Color darkTextColor = Color(0xFF1F1D2B);
+
+          return GestureDetector(
+            onTap: () => setState(() => _selectedDate = date),
+            child: Container(
+              width: 60,
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: isSelected ? Colors.white : Colors.transparent,
+                borderRadius: BorderRadius.circular(30),
+                border: isSelected ? null : Border.all(color: Colors.white24),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    DateFormat('E').format(date).substring(0, 3),
+                    style: TextStyle(color: isSelected ? darkTextColor : Colors.white70, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    DateFormat('d').format(date),
+                    style: TextStyle(color: isSelected ? darkTextColor : Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
