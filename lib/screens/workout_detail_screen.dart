@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package.fitflow/services/workout_service.dart';
-import 'package.fitflow/widgets/gradient_container.dart';
-import 'package.flutter/material.dart';
-import 'package.video_player/video_player.dart';
+import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/gradient_container.dart';
+import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
+import 'package:video_player/video_player.dart';
 
 class WorkoutDetailScreen extends StatefulWidget {
   final Exercise exercise;
