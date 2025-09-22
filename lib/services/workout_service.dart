@@ -103,9 +103,13 @@ class WorkoutService extends ChangeNotifier {
 
     _workoutHistory = {};
     for (var key in _historyBox.keys) {
-      final date = DateTime.parse(key as String);
-      final exercises = _historyBox.get(key)!.cast<Exercise>().toList();
-      _workoutHistory[date] = exercises;
+      try {
+        final date = DateTime.parse(key as String);
+        final exercises = _historyBox.get(key)!.map((e) => e as Exercise).toList();
+        _workoutHistory[date] = exercises;
+      } catch (e) {
+        print("Error loading history for key $key: $e");
+      }
     }
   }
 
@@ -154,7 +158,7 @@ class WorkoutService extends ChangeNotifier {
     if (completedExercises.isNotEmpty) {
       final today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
       _workoutHistory[today] = completedExercises;
-      _historyBox.put(today.toIso8601String(), completedExercises.cast<dynamic>());
+      _historyBox.put(today.toIso8601String(), completedExercises);
     }
     
     int currentWeek = DateTime.now().weekOfYear;
