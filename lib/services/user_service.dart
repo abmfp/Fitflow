@@ -8,21 +8,28 @@ class UserService extends ChangeNotifier {
 
   late Box _box;
   String _username = 'User';
+  String? _profilePicturePath;
 
   String get username => _username;
+  String? get profilePicturePath => _profilePicturePath;
 
   Future<void> init() async {
     _box = Hive.box('user_data');
-    // Load the username from the database when the app starts
     _username = _box.get('username', defaultValue: 'User');
+    _profilePicturePath = _box.get('profilePicturePath');
   }
 
   void updateUsername(String newName) {
     if (newName.isNotEmpty) {
       _username = newName;
-      // Save the new username to the database
       _box.put('username', newName);
       notifyListeners();
     }
+  }
+
+  void updateProfilePicture(String path) {
+    _profilePicturePath = path;
+    _box.put('profilePicturePath', path);
+    notifyListeners();
   }
 }
