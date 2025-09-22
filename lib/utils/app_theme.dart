@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package.google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final ThemeData darkTheme = ThemeData(
-    // The main fix: Use a solid color instead of transparent
     scaffoldBackgroundColor: const Color(0xFF1F1D2B),
     brightness: Brightness.dark,
     primaryColor: Colors.white,
@@ -43,7 +42,6 @@ class AppTheme {
     )
   );
 
-  // We can keep this for any screen where you might want a gradient in the future
   static const BoxDecoration gradientBackground = BoxDecoration(
     gradient: LinearGradient(
       colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
