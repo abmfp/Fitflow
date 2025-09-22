@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -100,61 +99,66 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           child: const Text('Finish Workout', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
       ),
-      body: GradientContainer(
-        child: _workoutService.todaysExercises.isEmpty
-            ? const Center(child: Text("No workout for today."))
-            : ReorderableListView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                itemCount: _workoutService.todaysExercises.length,
-                itemBuilder: (context, index) {
-                  final exercise = _workoutService.todaysExercises[index];
-                  return Card(
-                    key: Key(exercise.name),
-                    margin: const EdgeInsets.only(bottom: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.5),
-                    ),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.fade,
-                            child: WorkoutDetailScreen(exercise: exercise),
-                          ),
-                        );
+      body: _workoutService.todaysExercises.isEmpty
+          ? const Center(child: Text("No workout for today."))
+          : ReorderableListView.builder(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              itemCount: _workoutService.todaysExercises.length,
+              // This is the new property that fixes the bug
+              proxyDecorator: (Widget child, int index, Animation<double> animation) {
+                return Material(
+                  color: Colors.transparent,
+                  child: child,
+                );
+              },
+              itemBuilder: (context, index) {
+                final exercise = _workoutService.todaysExercises[index];
+                return Card(
+                  key: Key(exercise.name),
+                  margin: const EdgeInsets.only(bottom: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.5),
+                  ),
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.fade,
+                          child: WorkoutDetailScreen(exercise: exercise),
+                        ),
+                      );
+                    },
+                    contentPadding: const EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8),
+                    leading: Checkbox(
+                      value: exercise.isCompleted,
+                      onChanged: (bool? value) {
+                        _workoutService.toggleExerciseCompletion(exercise);
                       },
-                      contentPadding: const EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8),
-                      leading: Checkbox(
-                        value: exercise.isCompleted,
-                        onChanged: (bool? value) {
-                          _workoutService.toggleExerciseCompletion(exercise);
-                        },
-                        activeColor: Colors.white,
-                        checkColor: const Color(0xFF1F1D2B),
-                      ),
-                      title: Text(
-                        exercise.name,
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              decoration: exercise.isCompleted ? TextDecoration.lineThrough : null,
-                            ),
-                      ),
-                      trailing: const Icon(Icons.drag_handle_rounded, color: Colors.white70),
+                      activeColor: Colors.white,
+                      checkColor: const Color(0xFF1F1D2B),
                     ),
-                  );
-                },
-                onReorder: (int oldIndex, int newIndex) {
-                  setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-                    final Exercise item = _workoutService.todaysExercises.removeAt(oldIndex);
-                    _workoutService.todaysExercises.insert(newIndex, item);
-                  });
-                },
-              ),
-      ),
+                    title: Text(
+                      exercise.name,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            decoration: exercise.isCompleted ? TextDecoration.lineThrough : null,
+                          ),
+                    ),
+                    trailing: const Icon(Icons.drag_handle_rounded, color: Colors.white70),
+                  ),
+                );
+              },
+              onReorder: (int oldIndex, int newIndex) {
+                setState(() {
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  final Exercise item = _workoutService.todaysExercises.removeAt(oldIndex);
+                  _workoutService.todaysExercises.insert(newIndex, item);
+                });
+              },
+            ),
     );
   }
 }
