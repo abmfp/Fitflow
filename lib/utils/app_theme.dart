@@ -10,11 +10,11 @@ class AppTheme {
       error: const Color(0xFFE94560),
     ),
     textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme).copyWith(
-      displayLarge: const TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold, color: Colors.white),
-      displayMedium: const TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold, color: Colors.white),
-      bodyLarge: const TextStyle(fontSize: 16.0, color: Colors.white70),
+      displayLarge: const TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.white),
+      displayMedium: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
+      bodyLarge: const TextStyle(fontSize: 16.0, color: Colors.white70, fontWeight: FontWeight.w500),
       bodyMedium: const TextStyle(fontSize: 14.0, color: Colors.white54),
-      labelLarge: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white),
+      labelLarge: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
     cardTheme: CardThemeData(
       color: const Color(0xFF3A384B).withOpacity(0.5),
@@ -40,13 +40,5 @@ class AppTheme {
       secondaryLabelStyle: const TextStyle(color: Color(0xFF1F1D2B)),
       brightness: Brightness.dark,
     )
-  );
-
-  static const BoxDecoration gradientBackground = BoxDecoration(
-    gradient: LinearGradient(
-      colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
   );
 }
