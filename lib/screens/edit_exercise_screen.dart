@@ -1,4 +1,4 @@
-import 'dart.io';
+import 'dart:io';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
@@ -89,8 +89,8 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
             child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
             onPressed: () {
               _workoutService.deleteCustomExercise(widget.initialExercise!);
-              Navigator.of(ctx).pop(); // Close dialog
-              Navigator.of(context).pop(); // Go back from edit screen
+              Navigator.of(ctx).pop();
+              Navigator.of(context).pop();
             },
           ),
         ],
