@@ -1,4 +1,4 @@
-import 'dart.io';
+import 'dart:io';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: _userService.username);
-    // Add a listener to rebuild if the profile picture changes
     _userService.addListener(_onDataChanged);
   }
 
@@ -68,7 +67,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // --- Profile Picture Section ---
               CircleAvatar(
                 radius: 50,
                 backgroundColor: const Color(0xFF3A384B),
@@ -81,8 +79,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: const Text('Change Profile Picture'),
               ),
               const SizedBox(height: 30),
-
-              // --- Username Section ---
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
