@@ -30,6 +30,7 @@ dependencies:
   # Functionality
   image_picker: ^1.0.4
   uuid: ^4.2.1
+  video_player: ^2.8.6 # <-- This was the missing package
 
 dev_dependencies:
   flutter_test:
@@ -39,7 +40,6 @@ dev_dependencies:
   # Hive Code Generation
   hive_generator: ^2.0.1
   build_runner: ^2.4.6
-
 
 flutter:
   uses-material-design: true
