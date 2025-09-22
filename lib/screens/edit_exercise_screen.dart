@@ -28,7 +28,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialExercise?.name ?? '');
-    _descriptionController = TextEditingController();
+    _descriptionController = TextEditingController(text: widget.initialExercise?.description ?? '');
     _selectedMuscle = widget.initialExercise?.muscleGroup ?? _muscleGroups.first;
     _imagePath = widget.initialExercise?.imagePath;
     _videoPath = widget.initialExercise?.videoPath;
@@ -45,7 +45,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     final picker = ImagePicker();
     final XFile? file = isVideo
         ? await picker.pickVideo(source: ImageSource.gallery)
-        : await picker.pickImage(source: ImageSource.gallery);
+        : await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
 
     if (file != null) {
       setState(() {
@@ -64,6 +64,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     final newExerciseData = CustomExercise(
       name: _nameController.text,
       muscleGroup: _selectedMuscle,
+      description: _descriptionController.text,
       imagePath: _imagePath,
       videoPath: _videoPath,
     );
