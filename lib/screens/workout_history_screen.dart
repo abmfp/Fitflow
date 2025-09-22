@@ -72,7 +72,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                   setState(() {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
-                    _isExpanded = false; // Collapse the panel when a new day is selected
+                    _isExpanded = workoutsForSelectedDay.isNotEmpty;
                   });
                 },
                 calendarStyle: CalendarStyle(
@@ -82,11 +82,9 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                   selectedTextStyle: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
                 ),
                 headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
-                // This builder adds the checkmark
                 calendarBuilders: CalendarBuilders(
                   defaultBuilder: (context, day, focusedDay) {
-                    final workouts = _getWorkoutsForDay(day);
-                    if (workouts.isNotEmpty) {
+                    if (_getWorkoutsForDay(day).isNotEmpty) {
                       return Stack(
                         alignment: Alignment.center,
                         children: [
@@ -98,7 +96,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                         ],
                       );
                     }
-                    return null; // Return null to use default builder
+                    return null;
                   },
                 ),
               ),
