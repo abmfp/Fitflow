@@ -4,8 +4,14 @@ import 'package:flutter/material.dart';
 class GlassCard extends StatelessWidget {
   final Widget child;
   final VoidCallback? onTap;
+  final EdgeInsetsGeometry padding; // Add this line
 
-  const GlassCard({super.key, required this.child, this.onTap});
+  const GlassCard({
+    super.key, 
+    required this.child, 
+    this.onTap,
+    this.padding = const EdgeInsets.all(24.0), // Give it a default value
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +25,7 @@ class GlassCard extends StatelessWidget {
             onTap: onTap,
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              padding: const EdgeInsets.all(24.0),
+              padding: padding, // Use the padding property here
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
