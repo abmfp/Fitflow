@@ -2,8 +2,6 @@ import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/services/weight_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
-import 'package:fitflow/widgets/glass_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
@@ -96,75 +94,46 @@ class _HomeScreenState extends State<HomeScreen> {
     final String motivationalMessage = _getMotivationalMessage(streak);
 
     return Scaffold(
-      body: GradientContainer(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            children: [
-              _buildDateSelector(_selectedDate),
-              const SizedBox(height: 30),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text('Get ready, ${_userService.username}', style: Theme.of(context).textTheme.displayLarge),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          children: [
+            _buildDateSelector(_selectedDate),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text('Get ready, ${_userService.username}', style: Theme.of(context).textTheme.displayLarge),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text('Here\'s your plan for ${DateFormat('EEEE').format(_selectedDate)}', style: Theme.of(context).textTheme.bodyLarge),
+            ),
+            const SizedBox(height: 30),
+            _buildWorkoutCard(context, workoutTitle, exerciseCount)
+                .animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
+            const SizedBox(height: 20),
+            _buildInfoCard(
+              context,
+              icon: Icons.monitor_weight_outlined,
+              title: 'Weight for ${DateFormat('d MMM').format(_selectedDate)}',
+              subtitle: weightDisplay,
+              trailing: IconButton(
+                icon: const Icon(Icons.add, color: Colors.white),
+                onPressed: () => _showAddWeightDialog(context, _selectedDate),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text('Here\'s your plan for ${DateFormat('EEEE').format(_selectedDate)}', style: Theme.of(context).textTheme.bodyLarge),
-              ),
-              const SizedBox(height: 10),
-
-              GlassCard(
-                onTap: () {
-                  _workoutService.startWorkoutForDay(_selectedDate);
-                  Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WorkoutScreen()));
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(workoutTitle, style: Theme.of(context).textTheme.displayMedium),
-                          const SizedBox(height: 8),
-                          Text('$exerciseCount exercises', style: Theme.of(context).textTheme.bodyMedium),
-                        ],
-                      ),
-                    ),
-                    const Icon(Icons.arrow_forward_ios, color: Colors.white70),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
-              
-              GlassCard(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                onTap: () {
-                  Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
-                },
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.monitor_weight_outlined, color: Colors.white, size: 28),
-                  title: Text('Weight for ${DateFormat('d MMM').format(_selectedDate)}', style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 18)),
-                  subtitle: Text(weightDisplay, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.normal)),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    onPressed: () => _showAddWeightDialog(context, _selectedDate),
-                  ),
-                ),
-              ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
-              
-              GlassCard(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                onTap: widget.onNavigateToProgress,
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.local_fire_department_outlined, color: Colors.white, size: 28),
-                  title: Text('Day $streak / 6', style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 18)),
-                  subtitle: Text(motivationalMessage, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.normal)),
-                ),
-              ).animate().fadeIn(duration: 400.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
-            ],
-          ),
+              onTap: () {
+                Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
+              },
+            ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
+            const SizedBox(height: 20),
+            _buildInfoCard(
+              context,
+              icon: Icons.local_fire_department_outlined,
+              title: 'Day $streak / 6',
+              subtitle: motivationalMessage,
+              onTap: widget.onNavigateToProgress,
+            ).animate().fadeIn(duration: 400.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
+          ],
         ),
       ),
     );
@@ -209,6 +178,60 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildWorkoutCard(BuildContext context, String title, String count) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Card(
+        child: InkWell(
+          onTap: () {
+            _workoutService.startWorkoutForDay(_selectedDate);
+            Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WorkoutScreen()));
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: Theme.of(context).textTheme.displayMedium),
+                      const SizedBox(height: 8),
+                      Text('$count exercises', style: Theme.of(context).textTheme.bodyMedium),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios, color: Colors.white70),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(BuildContext context, {required IconData icon, required String title, required String subtitle, Widget? trailing, VoidCallback? onTap}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            leading: Icon(icon, color: Colors.white, size: 28),
+            title: Text(title, style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 18)),
+            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.normal)),
+            trailing: trailing,
+          ),
+        ),
       ),
     );
   }
