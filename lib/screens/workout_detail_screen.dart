@@ -47,7 +47,11 @@ class WorkoutDetailScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Center(
-          child: Icon(Icons.image_outlined, color: Colors.white54, size: 80),
+          child: Icon(
+            Icons.image_outlined,
+            color: Colors.white54,
+            size: 80,
+          ),
         ),
       ),
     );
