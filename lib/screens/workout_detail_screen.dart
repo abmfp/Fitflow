@@ -109,7 +109,6 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
 
   Widget _buildMediaViewer(BuildContext context) {
     return AspectRatio(
-      // This is the corrected aspect ratio
       aspectRatio: 9 / 16,
       child: Container(
         clipBehavior: Clip.antiAlias,
