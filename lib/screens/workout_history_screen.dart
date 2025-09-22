@@ -1,8 +1,8 @@
-import 'dart:ui';
+import 'dart:ui'; // Keep this import if you still want some blur effects elsewhere, but not for the main glassmorphism.
 import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
-import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
+import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -59,7 +59,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: GradientContainer(
+      body: GradientContainer( // Uses the solid color now
         child: Column(
           children: [
             _buildGlassmorphismContainer(
@@ -164,20 +164,22 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            padding: padding,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
-            ),
-            child: child,
+      // No ClipRRect or BackdropFilter needed here for solid background glassmorphism
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.15), // Base color for glassmorphism containers
+        borderRadius: BorderRadius.circular(20), // Rounded corners
+        border: Border.all(color: Colors.white.withOpacity(0.2)), // Subtle border
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
           ),
-        ),
+        ],
+      ),
+      child: Padding( // Use padding for content
+        padding: padding!,
+        child: child,
       ),
     );
   }
