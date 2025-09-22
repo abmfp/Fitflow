@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
+  // Define the solid background color based on your screenshot
+  static const Color primaryBackgroundColor = Color(0xFF4e54c8); 
+
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: Colors.transparent, // Set to transparent to allow gradient
+    scaffoldBackgroundColor: primaryBackgroundColor, // Use solid color here
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -17,7 +20,7 @@ class AppTheme {
       labelLarge: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
     cardTheme: CardThemeData(
-      color: Colors.white.withOpacity(0.1),
+      color: Colors.white.withOpacity(0.15), // Slightly increased opacity for better contrast
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -25,7 +28,7 @@ class AppTheme {
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF252836),
+      backgroundColor: Color(0xFF252836), // Keeping this as a dark shade for contrast
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white54,
       type: BottomNavigationBarType.fixed,
@@ -43,12 +46,7 @@ class AppTheme {
     )
   );
 
-  // New pinkish-purple gradient
-  static const BoxDecoration gradientBackground = BoxDecoration(
-    gradient: LinearGradient(
-      colors: [Color(0xFF4e54c8), Color(0xFF8f94fb)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-  );
+  // We no longer need a gradient background, as we're using a solid color
+  // The GradientContainer will be updated to use AppTheme.primaryBackgroundColor
+  // static const BoxDecoration gradientBackground = BoxDecoration(...); // REMOVE THIS
 }
