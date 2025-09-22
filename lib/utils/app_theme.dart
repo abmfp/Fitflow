@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Define the solid background color based on your screenshot
-  static const Color primaryBackgroundColor = Color(0xFF4e54c8); 
+  static const Color primaryBackgroundColor = Color(0xFF1F1D2B); 
 
   static final ThemeData darkTheme = ThemeData(
     scaffoldBackgroundColor: primaryBackgroundColor, // Use solid color here
@@ -19,16 +19,16 @@ class AppTheme {
       bodyMedium: const TextStyle(fontSize: 14.0, color: Colors.white54),
       labelLarge: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
+    // Updated card theme to match the screenshot's style
     cardTheme: CardThemeData(
-      color: Colors.white.withOpacity(0.15), // Slightly increased opacity for better contrast
+      color: const Color(0xFF3A384B).withOpacity(0.5),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.white.withOpacity(0.2)),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF252836), // Keeping this as a dark shade for contrast
+      backgroundColor: Color(0xFF252836),
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white54,
       type: BottomNavigationBarType.fixed,
@@ -45,8 +45,4 @@ class AppTheme {
       brightness: Brightness.dark,
     )
   );
-
-  // We no longer need a gradient background, as we're using a solid color
-  // The GradientContainer will be updated to use AppTheme.primaryBackgroundColor
-  // static const BoxDecoration gradientBackground = BoxDecoration(...); // REMOVE THIS
 }
