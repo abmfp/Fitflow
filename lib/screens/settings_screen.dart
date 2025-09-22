@@ -64,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.white,
-                  foregroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  foregroundColor: const Color(0xFF1F1D2B),
                   minimumSize: const Size(double.infinity, 50),
                 ),
                 child: const Text('Save Changes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
