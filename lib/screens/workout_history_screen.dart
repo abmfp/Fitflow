@@ -1,8 +1,6 @@
-import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
@@ -40,9 +38,16 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
     return _workoutService.workoutHistory[DateTime.utc(day.year, day.month, day.day)] ?? [];
   }
 
+  String _getMuscleGroupsForWorkout(List<Exercise> exercises) {
+    if (exercises.isEmpty) return "No Workout";
+    final muscles = exercises.map((e) => e.name.replaceAll(' Press', '')).toSet();
+    return muscles.join(' & ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final workoutsForSelectedDay = _getWorkoutsForDay(_selectedDay!);
+    final workoutTitle = _getMuscleGroupsForWorkout(workoutsForSelectedDay);
 
     return Scaffold(
       appBar: AppBar(
@@ -76,36 +81,25 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                 headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text("Workout on selected day:", style: Theme.of(context).textTheme.displayMedium),
-            ),
-            const SizedBox(height: 10),
+            
             Expanded(
               child: workoutsForSelectedDay.isEmpty
                   ? const Center(child: Text("No workout logged for this day."))
-                  : ListView.builder(
+                  : ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: workoutsForSelectedDay.length,
-                      itemBuilder: (context, index) {
-                        final exercise = workoutsForSelectedDay[index];
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 10),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
+                      children: [
+                        Card(
+                          child: ExpansionTile(
+                            title: Text(workoutTitle, style: Theme.of(context).textTheme.labelLarge),
+                            children: workoutsForSelectedDay.map((exercise) {
+                              return ListTile(
+                                title: Text(exercise.name),
+                                dense: true,
                               );
-                            },
-                            borderRadius: BorderRadius.circular(20),
-                            child: ListTile(
-                              title: Text(exercise.name),
-                              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                            ),
+                            }).toList(),
                           ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
             ),
           ],
