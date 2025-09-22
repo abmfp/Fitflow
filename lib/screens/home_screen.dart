@@ -2,7 +2,8 @@ import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/services/weight_service.dart';
-import 'package:fitflow/utils/app_theme.dart'; // Import your theme
+import 'package:fitflow/utils/app_theme.dart';
+import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
@@ -22,107 +23,131 @@ class _HomeScreenState extends State<HomeScreen> {
   final UserService _userService = UserService();
   final WeightService _weightService = WeightService();
 
-  // This will now track the user's date selection
   late DateTime _selectedDate;
 
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime.now(); // Initialize with today's date
-    // ... your listeners
+    _selectedDate = DateTime.now();
+    _workoutService.addListener(_onDataChanged);
+    _userService.addListener(_onDataChanged);
+    _weightService.addListener(_onDataChanged);
   }
 
-  // ... dispose and _onDataChanged methods are the same ...
+  @override
+  void dispose() {
+    _workoutService.removeListener(_onDataChanged);
+    _userService.removeListener(_onDataChanged);
+    _weightService.removeListener(_onDataChanged);
+    super.dispose();
+  }
+
+  void _onDataChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   void _showAddWeightDialog(BuildContext context) {
-    // ... same as before ...
+    final TextEditingController weightController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Log Your Weight'),
+        content: TextField(
+          controller: weightController,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          autofocus: true,
+          decoration: const InputDecoration(labelText: 'Weight (kg)', suffixText: 'kg'),
+        ),
+        actions: [
+          TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(ctx).pop()),
+          TextButton(
+            child: const Text('Save'),
+            onPressed: () {
+              final double? weight = double.tryParse(weightController.text);
+              if (weight != null) {
+                _weightService.addWeight(weight);
+              }
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Data now depends on _selectedDate instead of always being today
     final List<String> selectedDayMuscles = _workoutService.getMusclesForDay(_selectedDate);
     final String workoutTitle = selectedDayMuscles.isEmpty ? "Rest Day" : selectedDayMuscles.join(' & ');
     final String exerciseCount = selectedDayMuscles.length.toString();
 
     return Scaffold(
-      body: Container(
-        // Apply the gradient background here
-        decoration: AppTheme.gradientBackground,
+      body: GradientContainer(
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              // Use vertical padding only, horizontal padding will be on the cards
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Pass the selected date to the selector
-                  _buildDateSelector(_selectedDate),
-                  const SizedBox(height: 24),
-                  Padding(
-                    // Reduced horizontal padding on text for a wider look
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Text('Get ready, ${_userService.username}', style: Theme.of(context).textTheme.displayLarge),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Text('Here\'s your plan for ${DateFormat('EEEE').format(_selectedDate)}', style: Theme.of(context).textTheme.bodyLarge),
-                  ),
-                  const SizedBox(height: 24),
-                  
-                  _buildWorkoutCard(context, workoutTitle, exerciseCount)
-                      .animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
-
-                  const SizedBox(height: 16),
-                  
-                  // Updated the 'Weight' card to be dynamic
-                  _buildInfoCard(
-                    context,
-                    icon: Icons.monitor_weight_outlined,
-                    title: 'Weight for ${DateFormat('d MMM').format(_selectedDate)}',
-                    subtitle: 'View your history',
-                    trailing: IconButton(
-                      icon: const Icon(Icons.add, color: Colors.white),
-                      onPressed: () => _showAddWeightDialog(context),
-                    ),
-                    onTap: () {
-                      Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
-                    },
-                  ).animate().fadeIn(duration: 500.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
-
-                  const SizedBox(height: 16),
-                  
-                  _buildInfoCard(
-                    context,
-                    icon: Icons.local_fire_department_outlined,
-                    title: 'Day ${_workoutService.weeklyWorkoutCount} / 5',
-                    subtitle: 'View your progress',
-                    onTap: widget.onNavigateToProgress,
-                  ).animate().fadeIn(duration: 500.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
-                ],
+          // We now use a ListView which is a scrollable column by default.
+          child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            children: [
+              _buildDateSelector(_selectedDate),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Text('Get ready, ${_userService.username}', style: Theme.of(context).textTheme.displayLarge),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Text('Here\'s your plan for ${DateFormat('EEEE').format(_selectedDate)}', style: Theme.of(context).textTheme.bodyLarge),
+              ),
+              const SizedBox(height: 24),
+              
+              _buildWorkoutCard(context, workoutTitle, exerciseCount)
+                  .animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
+
+              const SizedBox(height: 16),
+              
+              _buildInfoCard(
+                context,
+                icon: Icons.monitor_weight_outlined,
+                title: 'Weight for ${DateFormat('d MMM').format(_selectedDate)}',
+                subtitle: 'View your history',
+                trailing: IconButton(
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  onPressed: () => _showAddWeightDialog(context),
+                ),
+                onTap: () {
+                  Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
+                },
+              ).animate().fadeIn(duration: 500.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
+
+              const SizedBox(height: 16),
+              
+              _buildInfoCard(
+                context,
+                icon: Icons.local_fire_department_outlined,
+                title: 'Day ${_workoutService.weeklyWorkoutCount} / 5',
+                subtitle: 'View your progress',
+                onTap: widget.onNavigateToProgress,
+              ).animate().fadeIn(duration: 500.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // Update the date selector to be interactive
   Widget _buildDateSelector(DateTime selectedDate) {
     return SizedBox(
       height: 70,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 7,
-        // Add horizontal padding to the list itself
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemBuilder: (context, index) {
           final date = DateTime.now().add(Duration(days: index - 3));
           final isSelected = date.day == selectedDate.day && date.month == selectedDate.month;
           return GestureDetector(
-            // When a date is tapped, update the state
             onTap: () => setState(() => _selectedDate = date),
             child: Container(
               width: 60,
@@ -147,18 +172,57 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Add horizontal padding to the cards to utilize the sides
   Widget _buildWorkoutCard(BuildContext context, String title, String count) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Card( /* ... Card content is the same ... */ ),
+      child: Card(
+        child: InkWell(
+          onTap: () {
+            _workoutService.startWorkoutForDay(_selectedDate);
+            Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WorkoutScreen()));
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: Theme.of(context).textTheme.displayMedium),
+                      const SizedBox(height: 4),
+                      Text('$count exercises', style: Theme.of(context).textTheme.bodyMedium),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios, color: Colors.white),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildInfoCard(BuildContext context, {required IconData icon, required String title, required String subtitle, Widget? trailing, VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Card( /* ... Card content is the same ... */ ),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            leading: Icon(icon, color: Colors.white, size: 28),
+            title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+            trailing: trailing,
+          ),
+        ),
+      ),
     );
   }
 }
