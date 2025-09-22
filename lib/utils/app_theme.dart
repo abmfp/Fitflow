@@ -41,4 +41,13 @@ class AppTheme {
       brightness: Brightness.dark,
     )
   );
+
+  // This definition was missing
+  static const BoxDecoration gradientBackground = BoxDecoration(
+    gradient: LinearGradient(
+      colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+  );
 }
