@@ -1,4 +1,5 @@
 import 'package:fitflow/services/weight_service.dart';
+import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -25,40 +26,43 @@ class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
   }
 
   void _onDataChanged() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get the live data from the service
     final history = _weightService.weightHistory;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Weight History'),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(20),
-        itemCount: history.length,
-        itemBuilder: (context, index) {
-          final entry = history[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 15),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              title: Text(
-                DateFormat('MMMM d, yyyy').format(entry.date),
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+      body: GradientContainer(
+        child: ListView.builder(
+          padding: const EdgeInsets.all(20),
+          itemCount: history.length,
+          itemBuilder: (context, index) {
+            final entry = history[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 15),
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                title: Text(
+                  DateFormat('MMMM d, yyyy').format(entry.date),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+                ),
+                trailing: Text(
+                  '${entry.weight} kg',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
               ),
-              trailing: Text(
-                '${entry.weight} kg',
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
