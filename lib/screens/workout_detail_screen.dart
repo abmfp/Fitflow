@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
-import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
+import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class WorkoutDetailScreen extends StatefulWidget {
@@ -109,7 +109,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
 
   Widget _buildMediaViewer(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 16 / 9,
+      // This is the corrected aspect ratio
+      aspectRatio: 9 / 16,
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
