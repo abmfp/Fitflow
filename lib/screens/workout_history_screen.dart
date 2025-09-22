@@ -1,6 +1,8 @@
+import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
@@ -93,6 +95,12 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                             title: Text(workoutTitle, style: Theme.of(context).textTheme.labelLarge),
                             children: workoutsForSelectedDay.map((exercise) {
                               return ListTile(
+                                onTap: () {
+                                   Navigator.push(
+                                    context,
+                                    PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
+                                  );
+                                },
                                 title: Text(exercise.name),
                                 dense: true,
                               );
