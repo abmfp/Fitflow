@@ -131,6 +131,7 @@ class WorkoutService extends ChangeNotifier {
     _currentWorkoutExercises = availableExercises
         .map((customEx) => Exercise(
               name: customEx.name,
+              description: "A sample description for ${customEx.name}.",
               imagePath: customEx.imagePath,
               videoPath: customEx.videoPath,
             ))
@@ -145,10 +146,15 @@ class WorkoutService extends ChangeNotifier {
   int finishCurrentWorkout() {
     final completedExercises = _currentWorkoutExercises.where((e) => e.isCompleted).toList();
     
+    if (completedExercises.isEmpty && _currentWorkoutExercises.isNotEmpty) {
+      for (var ex in _currentWorkoutExercises) { ex.isCompleted = true; }
+      completedExercises.addAll(_currentWorkoutExercises);
+    }
+    
     if (completedExercises.isNotEmpty) {
       final today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
       _workoutHistory[today] = completedExercises;
-      _historyBox.put(today.toIso8601String(), completedExercises);
+      _historyBox.put(today.toIso8601String(), completedExercises.cast<dynamic>());
     }
     
     int currentWeek = DateTime.now().weekOfYear;
@@ -204,14 +210,13 @@ class WorkoutService extends ChangeNotifier {
   void updateCustomExercise(CustomExercise oldExercise, CustomExercise newExerciseData) {
     oldExercise.imagePath = newExerciseData.imagePath;
     oldExercise.videoPath = newExerciseData.videoPath;
-    // In a full app, you would also update name and muscle group, which is more complex with HiveObjects
     oldExercise.save();
     notifyListeners();
   }
 
   void deleteCustomExercise(CustomExercise exercise) {
     exercise.delete();
-    _customExercises.removeWhere((ex) => ex.name == exercise.name);
+    _customExercises.removeWhere((ex) => ex.key == exercise.key);
     notifyListeners();
   }
 }
