@@ -43,6 +43,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
       if (!isEditMode) {
         _workoutService.addCustomExercise(newExercise);
       }
+      // In a full app, you would add logic here to update an existing exercise.
     }
     Navigator.of(context).pop();
   }
