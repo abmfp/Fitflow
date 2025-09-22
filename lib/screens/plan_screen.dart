@@ -12,7 +12,8 @@ class PlanScreen extends StatefulWidget {
 
 class _PlanScreenState extends State<PlanScreen> {
   final WorkoutService _workoutService = WorkoutService();
-  final List<String> allMuscles = ['Chest', 'Biceps', 'Triceps', 'Shoulders', 'Abs', 'Legs'];
+  // Updated muscle list as per your request
+  final List<String> allMuscles = ['Chest', 'Biceps', 'Triceps', 'Shoulders', 'Back', 'Legs', 'Abs'];
 
   void _showEditMusclesDialog(String day) {
     final List<String> selectedMuscles = List<String>.from(_workoutService.getMusclesForDay(DateTime.now()));
@@ -22,31 +23,34 @@ class _PlanScreenState extends State<PlanScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
            backgroundColor: const Color(0xFF252836),
-          title: Text('Edit $day'),
+          title: Text('Edit Plan for $day'),
+          // Use a StatefulWidget builder to manage the state of the checkboxes
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              return Wrap(
-                spacing: 8.0,
-                children: allMuscles.map((muscle) {
-                  final bool isSelected = selectedMuscles.contains(muscle);
-                  return FilterChip(
-                    label: Text(muscle),
-                    selected: isSelected,
-                    onSelected: (bool selected) {
-                      setState(() {
-                        if (selected) {
-                          selectedMuscles.add(muscle);
-                        } else {
-                          selectedMuscles.remove(muscle);
-                        }
-                      });
-                    },
-                    selectedColor: Colors.white,
-                    labelStyle: TextStyle(color: isSelected ? Theme.of(context).scaffoldBackgroundColor : Colors.white70),
-                    backgroundColor: Colors.white.withOpacity(0.1),
-                    checkmarkColor: Theme.of(context).scaffoldBackgroundColor,
-                  );
-                }).toList(),
+              // Use a SingleChildScrollView to prevent overflow if the list is long
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: allMuscles.map((muscle) {
+                    final bool isSelected = selectedMuscles.contains(muscle);
+                    // Using CheckboxListTile for each muscle
+                    return CheckboxListTile(
+                      title: Text(muscle),
+                      value: isSelected,
+                      onChanged: (bool? selected) {
+                        setState(() {
+                          if (selected == true) {
+                            selectedMuscles.add(muscle);
+                          } else {
+                            selectedMuscles.remove(muscle);
+                          }
+                        });
+                      },
+                      activeColor: Colors.white,
+                      checkColor: const Color(0xFF1F1D2B),
+                    );
+                  }).toList(),
+                ),
               );
             },
           ),
@@ -55,6 +59,7 @@ class _PlanScreenState extends State<PlanScreen> {
             TextButton(
               child: const Text('Save'),
               onPressed: () {
+                // We call the main setState for the screen to reflect changes if needed
                 setState(() {
                   _workoutService.updatePlanForDay(day, selectedMuscles);
                 });
