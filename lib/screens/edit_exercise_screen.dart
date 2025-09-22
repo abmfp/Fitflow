@@ -1,6 +1,8 @@
+import 'dart.io';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditExerciseScreen extends StatefulWidget {
   final CustomExercise? initialExercise;
@@ -17,6 +19,9 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
   late String _selectedMuscle;
   final List<String> _muscleGroups = ['Back', 'Chest', 'Legs', 'Shoulders', 'Biceps', 'Triceps', 'Abs'];
 
+  String? _imagePath;
+  String? _videoPath;
+
   bool get isEditMode => widget.initialExercise != null;
 
   @override
@@ -25,6 +30,8 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     _nameController = TextEditingController(text: widget.initialExercise?.name ?? '');
     _descriptionController = TextEditingController();
     _selectedMuscle = widget.initialExercise?.muscleGroup ?? _muscleGroups.first;
+    _imagePath = widget.initialExercise?.imagePath;
+    _videoPath = widget.initialExercise?.videoPath;
   }
 
   @override
@@ -34,18 +41,61 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     super.dispose();
   }
 
+  Future<void> _pickMedia(bool isVideo) async {
+    final picker = ImagePicker();
+    final XFile? file = isVideo
+        ? await picker.pickVideo(source: ImageSource.gallery)
+        : await picker.pickImage(source: ImageSource.gallery);
+
+    if (file != null) {
+      setState(() {
+        if (isVideo) {
+          _videoPath = file.path;
+        } else {
+          _imagePath = file.path;
+        }
+      });
+    }
+  }
+
   void _saveExercise() {
-     if (_nameController.text.isNotEmpty) {
-      final newExercise = CustomExercise(
-        name: _nameController.text,
-        muscleGroup: _selectedMuscle,
-      );
-      if (!isEditMode) {
-        _workoutService.addCustomExercise(newExercise);
-      }
-      // In a full app, you would add logic here to update an existing exercise.
+    if (_nameController.text.isEmpty) return;
+
+    final newExerciseData = CustomExercise(
+      name: _nameController.text,
+      muscleGroup: _selectedMuscle,
+      imagePath: _imagePath,
+      videoPath: _videoPath,
+    );
+
+    if (isEditMode) {
+      _workoutService.updateCustomExercise(widget.initialExercise!, newExerciseData);
+    } else {
+      _workoutService.addCustomExercise(newExerciseData);
     }
     Navigator.of(context).pop();
+  }
+  
+  void _deleteExercise() {
+     showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF252836),
+        title: const Text('Confirm Deletion'),
+        content: Text('Are you sure you want to delete "${widget.initialExercise!.name}"?'),
+        actions: [
+          TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(ctx).pop()),
+          TextButton(
+            child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            onPressed: () {
+              _workoutService.deleteCustomExercise(widget.initialExercise!);
+              Navigator.of(ctx).pop(); // Close dialog
+              Navigator.of(context).pop(); // Go back from edit screen
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -59,12 +109,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
           if (isEditMode)
             IconButton(
               icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
-              onPressed: () {
-                if(widget.initialExercise != null){
-                  _workoutService.deleteCustomExercise(widget.initialExercise!);
-                }
-                Navigator.of(context).pop();
-              },
+              onPressed: _deleteExercise,
             ),
         ],
       ),
@@ -90,9 +135,17 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
               const SizedBox(height: 30),
               Row(
                 children: [
-                  Expanded(child: _buildMediaButton(icon: Icons.image_outlined, label: 'Add Image')),
+                  Expanded(child: _buildMediaButton(
+                    icon: Icons.image_outlined, 
+                    label: _imagePath == null ? 'Add Image' : 'Change Image',
+                    onPressed: () => _pickMedia(false),
+                  )),
                   const SizedBox(width: 15),
-                  Expanded(child: _buildMediaButton(icon: Icons.videocam_outlined, label: 'Add Video')),
+                  Expanded(child: _buildMediaButton(
+                    icon: Icons.videocam_outlined,
+                    label: _videoPath == null ? 'Add Video' : 'Change Video',
+                    onPressed: () => _pickMedia(true),
+                  )),
                 ],
               ),
               const SizedBox(height: 30),
@@ -101,7 +154,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.white,
-                  foregroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  foregroundColor: const Color(0xFF1F1D2B),
                 ),
                 child: const Text('Save Exercise', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
@@ -154,9 +207,9 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     );
   }
 
-  Widget _buildMediaButton({required IconData icon, required String label}) {
+  Widget _buildMediaButton({required IconData icon, required String label, required VoidCallback onPressed}) {
     return OutlinedButton.icon(
-      onPressed: () {},
+      onPressed: onPressed,
       icon: Icon(icon, color: Colors.white70),
       label: Text(label, style: const TextStyle(color: Colors.white70)),
       style: OutlinedButton.styleFrom(
