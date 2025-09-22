@@ -2,17 +2,43 @@ import 'dart:io';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
-class WorkoutDetailScreen extends StatelessWidget {
+class WorkoutDetailScreen extends StatefulWidget {
   final Exercise exercise;
-
   const WorkoutDetailScreen({super.key, required this.exercise});
+
+  @override
+  State<WorkoutDetailScreen> createState() => _WorkoutDetailScreenState();
+}
+
+class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
+  VideoPlayerController? _videoController;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.exercise.videoPath != null && File(widget.exercise.videoPath!).existsSync()) {
+      _videoController = VideoPlayerController.file(File(widget.exercise.videoPath!))
+        ..initialize().then((_) {
+          if (mounted) {
+            setState(() {});
+          }
+        });
+    }
+  }
+
+  @override
+  void dispose() {
+    _videoController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(exercise.name),
+        title: Text(widget.exercise.name),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -27,7 +53,7 @@ class WorkoutDetailScreen extends StatelessWidget {
               Text('Description', style: Theme.of(context).textTheme.displayMedium),
               const SizedBox(height: 10),
               Text(
-                exercise.description ?? 'No description available for this exercise.',
+                widget.exercise.description ?? 'No description available for this exercise.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
               ),
               const SizedBox(height: 30),
@@ -48,14 +74,21 @@ class WorkoutDetailScreen extends StatelessWidget {
           color: Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: exercise.imagePath != null && File(exercise.imagePath!).existsSync()
-            ? Image.file(
-                File(exercise.imagePath!),
-                fit: BoxFit.cover,
+        child: _videoController?.value.isInitialized ?? false
+            ? InkWell(
+                onTap: () => setState(() => _videoController!.value.isPlaying ? _videoController!.pause() : _videoController!.play()),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    VideoPlayer(_videoController!),
+                    if (!_videoController!.value.isPlaying)
+                      Icon(Icons.play_arrow_rounded, color: Colors.white.withOpacity(0.7), size: 80),
+                  ],
+                ),
               )
-            : const Center(
-                child: Icon(Icons.image_outlined, color: Colors.white54, size: 80),
-              ),
+            : widget.exercise.imagePath != null && File(widget.exercise.imagePath!).existsSync()
+                ? Image.file(File(widget.exercise.imagePath!), fit: BoxFit.cover)
+                : const Center(child: Icon(Icons.image_outlined, color: Colors.white54, size: 80)),
       ),
     );
   }
