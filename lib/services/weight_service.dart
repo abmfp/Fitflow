@@ -37,15 +37,27 @@ class WeightService extends ChangeNotifier {
     _weightHistory = _box.values.toList();
   }
 
-  void addWeight(double weight) {
+  // New function to get weight for a specific day
+  WeightEntry? getWeightForDate(DateTime date) {
+    try {
+      return _weightHistory.firstWhere((entry) =>
+          entry.date.year == date.year &&
+          entry.date.month == date.month &&
+          entry.date.day == date.day);
+    } catch (e) {
+      return null; // Return null if no entry is found
+    }
+  }
+
+  void addWeight(double weight, DateTime date) {
     _weightHistory.removeWhere((entry) =>
-        entry.date.year == DateTime.now().year &&
-        entry.date.month == DateTime.now().month &&
-        entry.date.day == DateTime.now().day);
+        entry.date.year == date.year &&
+        entry.date.month == date.month &&
+        entry.date.day == date.day);
     
-    final newEntry = WeightEntry(date: DateTime.now(), weight: weight);
+    final newEntry = WeightEntry(date: date, weight: weight);
     _weightHistory.add(newEntry);
-    _box.add(newEntry); // Save to database
+    _box.add(newEntry);
     notifyListeners();
   }
 }
