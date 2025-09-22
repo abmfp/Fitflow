@@ -42,7 +42,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
 
   String _getMuscleGroupsForWorkout(List<Exercise> exercises) {
     if (exercises.isEmpty) return "No Workout";
-    final muscles = exercises.map((e) => e.name.replaceAll(' Press', '')).toSet();
+    final muscles = exercises.map((e) => _workoutService.customExercises.firstWhere((ce) => ce.name == e.name, orElse: () => CustomExercise(name: '', muscleGroup: 'Unknown')).muscleGroup).toSet();
     return muscles.join(' & ');
   }
 
@@ -84,7 +84,6 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                 headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
               ),
             ),
-            
             Expanded(
               child: workoutsForSelectedDay.isEmpty
                   ? const Center(child: Text("No workout logged for this day."))
@@ -97,9 +96,8 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                             children: workoutsForSelectedDay.map((exercise) {
                               return ListTile(
                                 onTap: () {
-                                   Navigator.push(
+                                  Navigator.push(
                                     context,
-                                    // This line is corrected
                                     PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
                                   );
                                 },
