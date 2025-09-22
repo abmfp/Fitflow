@@ -41,9 +41,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final missedDays = {2, 4, 6, 8, 12};
-    final today = DateTime.utc(2025, 9, 17);
-
     return Scaffold(
       body: GradientContainer(
         child: SafeArea(
@@ -59,13 +56,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   const SizedBox(height: 15),
                   _buildWeightAnalyticsCard(context),
                   const SizedBox(height: 30),
-                  _buildSectionTitle(context, 'Today\'s Stats'),
+                  _buildSectionTitle(context, "Today's Stats"),
                   const SizedBox(height: 15),
                   _buildTodayStatsCard(context),
                   const SizedBox(height: 30),
                   _buildSectionTitle(context, 'Workout Streak'),
                   const SizedBox(height: 15),
-                  _buildWorkoutStreakCalendar(context, missedDays, today),
+                  _buildWorkoutStreakCalendar(context),
                 ],
               ),
             ),
@@ -95,7 +92,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       return Card(
         child: InkWell(
           onTap: navigateToHistory,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           child: SizedBox(
             width: double.infinity,
             height: 150,
@@ -179,7 +176,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Widget _buildWorkoutStreakCalendar(BuildContext context, Set<int> missedDays, DateTime today) {
+  Widget _buildWorkoutStreakCalendar(BuildContext context) {
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -188,16 +185,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 type: PageTransitionType.fade,
                 child: const WorkoutHistoryScreen()));
       },
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: TableCalendar(
-            firstDay: DateTime.utc(2025, 9, 1),
-            lastDay: DateTime.utc(2025, 9, 30),
-            focusedDay: today,
+            firstDay: DateTime.utc(2020, 1, 1),
+            lastDay: DateTime.utc(2030, 12, 31),
+            focusedDay: DateTime.now(),
             headerVisible: true,
             calendarFormat: CalendarFormat.month,
+            eventLoader: (day) {
+              return _workoutService.workoutHistory[DateTime.utc(day.year, day.month, day.day)] ?? [];
+            },
             headerStyle: HeaderStyle(
               titleCentered: true,
               formatButtonVisible: false,
@@ -205,31 +205,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
               leftChevronVisible: false,
               rightChevronVisible: false,
             ),
-            daysOfWeekStyle: DaysOfWeekStyle(
-              weekdayStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-              weekendStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-            ),
-            calendarStyle: const CalendarStyle(
-              defaultTextStyle: TextStyle(color: Colors.white),
-              weekendTextStyle: TextStyle(color: Colors.white),
+            calendarStyle: CalendarStyle(
+              defaultTextStyle: const TextStyle(color: Colors.white),
+              weekendTextStyle: const TextStyle(color: Colors.white),
               outsideDaysVisible: false,
-            ),
-            calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, day, focusedDay) {
-                if (missedDays.contains(day.day)) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('${day.day}', style: const TextStyle(color: Colors.white)),
-                      const SizedBox(height: 2),
-                      const Icon(Icons.close, color: Colors.red, size: 14),
-                    ],
-                  );
-                }
-                return Center(
-                    child: Text('${day.day}',
-                        style: const TextStyle(color: Colors.white)));
-              },
+              todayDecoration: BoxDecoration(color: Colors.white.withOpacity(0.3), shape: BoxShape.circle),
+              markerDecoration: BoxDecoration(color: Theme.of(context).colorScheme.error, shape: BoxShape.circle),
             ),
           ),
         ),
