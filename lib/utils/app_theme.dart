@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package.flutter/material.dart';
+import 'package.google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final ThemeData darkTheme = ThemeData(
-    // We'll use a container with a gradient instead of a solid color
-    scaffoldBackgroundColor: Colors.transparent,
+    scaffoldBackgroundColor: Colors.transparent, // We use a gradient container
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -17,13 +16,12 @@ class AppTheme {
       bodyMedium: const TextStyle(fontSize: 14.0, color: Colors.white54),
       labelLarge: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
-    // This creates a more noticeable glass effect
+    // Updated card theme to match the screenshot
     cardTheme: CardThemeData(
-      color: Colors.white.withOpacity(0.1),
+      color: const Color(0xFF3A384B).withOpacity(0.5),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.white.withOpacity(0.2)),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -45,12 +43,12 @@ class AppTheme {
     )
   );
 
-  // Define the gradient to be used as the background
+  // New gradient to match the dark purple in your image
   static const BoxDecoration gradientBackground = BoxDecoration(
     gradient: LinearGradient(
       colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
     ),
   );
 }
