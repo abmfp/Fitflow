@@ -1,10 +1,10 @@
 import 'dart:ui';
-import 'package.fitflow/screens/workout_detail_screen.dart';
-import 'package.fitflow/services/workout_service.dart';
-import 'package.fitflow/widgets/gradient_container.dart';
-import 'package.flutter/material.dart';
-import 'package.page_transition/page_transition.dart';
-import 'package.table_calendar/table_calendar.dart';
+import 'package:fitflow/screens/workout_detail_screen.dart';
+import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/gradient_container.dart';
+import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
+import 'package:page_transition/page_transition.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
   const WorkoutHistoryScreen({super.key});
@@ -62,7 +62,6 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
       body: GradientContainer(
         child: Column(
           children: [
-            // Glassmorphism Calendar
             _buildGlassmorphismContainer(
               context: context,
               child: TableCalendar(
@@ -110,10 +109,9 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                   : ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       children: [
-                        // Glassmorphism Expansion Panel
                         _buildGlassmorphismContainer(
                           context: context,
-                          padding: EdgeInsets.zero, // Remove padding for ExpansionPanel
+                          padding: EdgeInsets.zero,
                           child: ExpansionPanelList(
                             elevation: 0,
                             expandedHeaderPadding: EdgeInsets.zero,
@@ -125,7 +123,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                             },
                             children: [
                               ExpansionPanel(
-                                backgroundColor: Colors.transparent, // Panel itself is transparent
+                                backgroundColor: Colors.transparent,
                                 isExpanded: _isExpanded,
                                 headerBuilder: (BuildContext context, bool isExpanded) {
                                   return ListTile(
@@ -159,14 +157,13 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
     );
   }
 
-  // Reusable helper for the glassmorphism container
   Widget _buildGlassmorphismContainer({
     required BuildContext context,
     required Widget child,
     EdgeInsets? padding = const EdgeInsets.all(16.0),
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
