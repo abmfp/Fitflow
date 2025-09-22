@@ -1,9 +1,10 @@
-import 'package:fitflow/screens/workout_detail_screen.dart';
-import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
-import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'dart:ui';
+import 'package.fitflow/screens/workout_detail_screen.dart';
+import 'package.fitflow/services/workout_service.dart';
+import 'package.fitflow/widgets/gradient_container.dart';
+import 'package.flutter/material.dart';
+import 'package.page_transition/page_transition.dart';
+import 'package.table_calendar/table_calendar.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
   const WorkoutHistoryScreen({super.key});
@@ -61,8 +62,9 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
       body: GradientContainer(
         child: Column(
           children: [
-            Card(
-              margin: const EdgeInsets.all(20),
+            // Glassmorphism Calendar
+            _buildGlassmorphismContainer(
+              context: context,
               child: TableCalendar(
                 firstDay: DateTime.utc(2020, 1, 1),
                 lastDay: DateTime.utc(2030, 12, 31),
@@ -72,7 +74,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                   setState(() {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
-                    _isExpanded = workoutsForSelectedDay.isNotEmpty;
+                    _isExpanded = _getWorkoutsForDay(selectedDay).isNotEmpty;
                   });
                 },
                 calendarStyle: CalendarStyle(
@@ -108,45 +110,76 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                   : ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       children: [
-                        ExpansionPanelList(
-                          elevation: 0,
-                          expandedHeaderPadding: EdgeInsets.zero,
-                          dividerColor: Colors.transparent,
-                          expansionCallback: (int index, bool isExpanded) {
-                            setState(() {
-                              _isExpanded = !_isExpanded;
-                            });
-                          },
-                          children: [
-                            ExpansionPanel(
-                              backgroundColor: Theme.of(context).cardTheme.color,
-                              isExpanded: _isExpanded,
-                              headerBuilder: (BuildContext context, bool isExpanded) {
-                                return ListTile(
-                                  title: Text(workoutTitle, style: Theme.of(context).textTheme.labelLarge),
-                                );
-                              },
-                              body: Column(
-                                children: workoutsForSelectedDay.map((exercise) {
+                        // Glassmorphism Expansion Panel
+                        _buildGlassmorphismContainer(
+                          context: context,
+                          padding: EdgeInsets.zero, // Remove padding for ExpansionPanel
+                          child: ExpansionPanelList(
+                            elevation: 0,
+                            expandedHeaderPadding: EdgeInsets.zero,
+                            dividerColor: Colors.transparent,
+                            expansionCallback: (int index, bool isExpanded) {
+                              setState(() {
+                                _isExpanded = !_isExpanded;
+                              });
+                            },
+                            children: [
+                              ExpansionPanel(
+                                backgroundColor: Colors.transparent, // Panel itself is transparent
+                                isExpanded: _isExpanded,
+                                headerBuilder: (BuildContext context, bool isExpanded) {
                                   return ListTile(
-                                    title: Text(exercise.name),
-                                    dense: true,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
-                                      );
-                                    },
+                                    title: Text(workoutTitle, style: Theme.of(context).textTheme.labelLarge),
                                   );
-                                }).toList(),
+                                },
+                                body: Column(
+                                  children: workoutsForSelectedDay.map((exercise) {
+                                    return ListTile(
+                                      title: Text(exercise.name),
+                                      dense: true,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
+                                        );
+                                      },
+                                    );
+                                  }).toList(),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // Reusable helper for the glassmorphism container
+  Widget _buildGlassmorphismContainer({
+    required BuildContext context,
+    required Widget child,
+    EdgeInsets? padding = const EdgeInsets.all(16.0),
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            padding: padding,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: child,
+          ),
         ),
       ),
     );
