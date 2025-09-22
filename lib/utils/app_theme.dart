@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package.google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: Colors.transparent, // We use a gradient container
+    // The main fix: Use a solid color instead of transparent
+    scaffoldBackgroundColor: const Color(0xFF1F1D2B),
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -16,7 +17,6 @@ class AppTheme {
       bodyMedium: const TextStyle(fontSize: 14.0, color: Colors.white54),
       labelLarge: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
-    // Updated card theme to match the screenshot's style
     cardTheme: CardThemeData(
       color: const Color(0xFF3A384B).withOpacity(0.5),
       elevation: 0,
@@ -43,7 +43,7 @@ class AppTheme {
     )
   );
 
-  // Gradient updated to match the dark purple in your image
+  // We can keep this for any screen where you might want a gradient in the future
   static const BoxDecoration gradientBackground = BoxDecoration(
     gradient: LinearGradient(
       colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
