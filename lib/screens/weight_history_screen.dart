@@ -32,7 +32,6 @@ class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
     }
   }
 
-  // Function to show a confirmation dialog before deleting
   void _showDeleteConfirmationDialog(WeightEntry entry) {
     showDialog(
       context: context,
@@ -70,7 +69,33 @@ class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
             if (chartData.isNotEmpty)
               Card(
                 margin: const EdgeInsets.all(20),
-                child: Padding( /* ... Chart code is the same ... */ ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                  child: AspectRatio(
+                    aspectRatio: 1.7,
+                    child: LineChart(
+                      LineChartData(
+                        gridData: const FlGridData(show: false),
+                        titlesData: const FlTitlesData(show: false),
+                        borderData: FlBorderData(show: false),
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: chartData,
+                            isCurved: true,
+                            color: Colors.white,
+                            barWidth: 4,
+                            isStrokeCapRound: true,
+                            dotData: const FlDotData(show: false),
+                            belowBarData: BarAreaData(
+                              show: true,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             Expanded(
               child: ListView.builder(
@@ -86,7 +111,6 @@ class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
                         DateFormat('MMMM d, yyyy').format(entry.date),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                       ),
-                      // The trailing widget is now a Row with the weight and a delete button
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
