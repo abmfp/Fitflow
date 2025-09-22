@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart.io';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
@@ -193,9 +193,8 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
           });
         }
       },
-      items: _muscleGroups.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(value: value, child: Text(value));
-      }).toList(),
+      dropdownColor: const Color(0xFF252836),
+      icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
       decoration: InputDecoration(
         labelText: 'Target Muscle',
         filled: true,
@@ -205,6 +204,12 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
           borderSide: BorderSide.none,
         ),
       ),
+      items: _muscleGroups.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
     );
   }
 
