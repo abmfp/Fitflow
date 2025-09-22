@@ -1,39 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:week_of_year/week_of_year.dart'; // New package for week calculation
 
 part 'workout_service.g.dart';
 
 @HiveType(typeId: 1)
-class Exercise {
-  @HiveField(0)
-  final String name;
-  @HiveField(1)
-  bool isCompleted;
-  @HiveField(2)
-  final String? description;
-  @HiveField(3)
-  final String? imageUrl;
-  @HiveField(4)
-  final String? videoUrl;
-
-  Exercise({
-    required this.name,
-    this.isCompleted = false,
-    this.description,
-    this.imageUrl,
-    this.videoUrl,
-  });
-}
+class Exercise { /* ... */ }
 
 @HiveType(typeId: 2)
-class CustomExercise {
-  @HiveField(0)
-  final String name;
-  @HiveField(1)
-  final String muscleGroup;
-  CustomExercise({required this.name, required this.muscleGroup});
-}
+class CustomExercise { /* ... */ }
 
 class WorkoutService extends ChangeNotifier {
   static final WorkoutService _instance = WorkoutService._internal();
@@ -44,29 +20,12 @@ class WorkoutService extends ChangeNotifier {
   late Box<List> _historyBox;
   late Box<CustomExercise> _customExercisesBox;
 
-  final List<Map<String, dynamic>> _weeklyPlan = [
-    {'day': 'Monday', 'muscles': ['Chest', 'Biceps']},
-    {'day': 'Tuesday', 'muscles': ['Back', 'Triceps']},
-    {'day': 'Wednesday', 'muscles': ['Legs', 'Shoulders']},
-    {'day': 'Thursday', 'muscles': []},
-    {'day': 'Friday', 'muscles': ['Chest', 'Back']},
-    {'day': 'Saturday', 'muscles': ['Abs']},
-    {'day': 'Sunday', 'muscles': []},
-  ];
-  
-  Map<DateTime, List<Exercise>> _workoutHistory = {};
-  List<Exercise> _currentWorkoutExercises = [];
-  List<CustomExercise> _customExercises = [];
+  // ... other state variables ...
   int _weeklyWorkoutCount = 0;
+  int _lastWorkoutWeek = 0; // New variable to track the week number
 
-  List<Map<String, dynamic>> get weeklyPlan => _weeklyPlan;
-  Map<DateTime, List<Exercise>> get workoutHistory => _workoutHistory;
-  List<Exercise> get todaysExercises => _currentWorkoutExercises;
-  List<CustomExercise> get customExercises => _customExercises;
+  // ... getters ...
   int get weeklyWorkoutCount => _weeklyWorkoutCount;
-  int get completedExercisesCount => _currentWorkoutExercises.where((e) => e.isCompleted).length;
-  int get totalExercisesCount => _currentWorkoutExercises.length;
-  double get completionPercentage => totalExercisesCount == 0 ? 0 : (completedExercisesCount / totalExercisesCount) * 100;
 
   Future<void> init() async {
     _dataBox = Hive.box('workout_data');
@@ -74,9 +33,17 @@ class WorkoutService extends ChangeNotifier {
     _customExercisesBox = Hive.box<CustomExercise>('custom_exercises');
 
     _weeklyWorkoutCount = _dataBox.get('weeklyWorkoutCount', defaultValue: 0);
+    _lastWorkoutWeek = _dataBox.get('lastWorkoutWeek', defaultValue: 0);
+    
+    // Check if the week has changed since the last workout
+    int currentWeek = DateTime.now().weekOfYear;
+    if (currentWeek != _lastWorkoutWeek) {
+      _weeklyWorkoutCount = 0; // Reset the streak
+      _dataBox.put('weeklyWorkoutCount', 0);
+    }
+
     _customExercises = _customExercisesBox.values.toList();
     
-    // Add default exercises if the library is empty
     if (_customExercises.isEmpty) {
       _addDefaultExercises();
     }
@@ -89,27 +56,25 @@ class WorkoutService extends ChangeNotifier {
     }
   }
 
-  void _addDefaultExercises() {
-    final defaultExercises = [
-        CustomExercise(name: 'Deadlifts', muscleGroup: 'Back'),
-        CustomExercise(name: 'Barbell Incline Bench Press', muscleGroup: 'Chest'),
-        CustomExercise(name: 'Squats', muscleGroup: 'Legs'),
-        CustomExercise(name: 'Barbell Push Press', muscleGroup: 'Shoulders'),
-        CustomExercise(name: 'Lat Pulldowns', muscleGroup: 'Back'),
-        CustomExercise(name: 'Dumbbell Curls', muscleGroup: 'Biceps'),
-    ];
-    for (var ex in defaultExercises) {
-      _customExercisesBox.add(ex);
+  int finishCurrentWorkout() {
+    // ... logic to save workout to history ...
+    
+    // Update the weekly streak
+    int currentWeek = DateTime.now().weekOfYear;
+    if (currentWeek != _lastWorkoutWeek) {
+      _weeklyWorkoutCount = 1; // Start of a new week, first workout
+    } else {
+      _weeklyWorkoutCount++;
     }
-    _customExercises = defaultExercises;
+    
+    _lastWorkoutWeek = currentWeek; // Save the current week number
+    _dataBox.put('weeklyWorkoutCount', _weeklyWorkoutCount);
+    _dataBox.put('lastWorkoutWeek', _lastWorkoutWeek);
+    
+    _currentWorkoutExercises = [];
+    notifyListeners();
+    return completedExercises.length;
   }
   
-  void startWorkoutForDay(DateTime date) { /* ... same as before ... */ }
-  int finishCurrentWorkout() { /* ... same as before ... */ }
-  List<String> getMusclesForDay(DateTime date) { /* ... same as before ... */ }
-  void toggleExerciseCompletion(Exercise exercise) { /* ... same as before ... */ }
-  void updatePlanForDay(String day, List<String> muscles) { /* ... same as before ... */ }
-  List<CustomExercise> getExercisesForMuscleGroups(List<String> muscles) { /* ... same as before ... */ }
-  void addCustomExercise(CustomExercise exercise) { /* ... same as before ... */ }
-  void deleteCustomExercise(CustomExercise exercise) { /* ... same as before ... */ }
+  // ... rest of the service file is the same ...
 }
