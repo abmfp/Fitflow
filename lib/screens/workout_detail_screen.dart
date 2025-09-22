@@ -1,9 +1,8 @@
 import 'dart:io';
-// import 'dart:ui'; // REMOVE THIS IMPORT as BackdropFilter is no longer used
-import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
-import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+import 'package.fitflow/services/workout_service.dart';
+import 'package.fitflow/widgets/gradient_container.dart';
+import 'package.flutter/material.dart';
+import 'package.video_player/video_player.dart';
 
 class WorkoutDetailScreen extends StatefulWidget {
   final Exercise exercise;
@@ -56,7 +55,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: GradientContainer( // Uses the solid color now
+      body: GradientContainer(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -114,9 +113,9 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15), // Base color for glassmorphism containers
-          borderRadius: BorderRadius.circular(20), // Rounded corners
-          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.0), // Subtle border
+          color: Colors.white.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -125,8 +124,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
             ),
           ],
         ),
-        // REMOVE BackdropFilter for solid background
-        child: Container( // Simply a Container now
+        child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(20.0),
           child: _isLoading
@@ -145,7 +143,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                     )
                   : widget.exercise.imagePath != null && File(widget.exercise.imagePath!).existsSync()
                       ? Image.file(File(widget.exercise.imagePath!), fit: BoxFit.cover)
-                      : const Center(child: Icon(Icons.video_off_outlined, color: Colors.white54, size: 80)),
+                      : const Center(child: Icon(Icons.videocam_off_outlined, color: Colors.white54, size: 80)),
         ),
       ),
     );
@@ -155,9 +153,9 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15), // Base color for glassmorphism containers
-        borderRadius: BorderRadius.circular(20), // Rounded corners
-        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.0), // Subtle border
+        color: Colors.white.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -166,8 +164,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
           ),
         ],
       ),
-      // REMOVE BackdropFilter for solid background
-      child: Container( // Simply a Container now
+      child: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.all(20.0),
         child: child,
