@@ -7,15 +7,10 @@ part 'workout_service.g.dart';
 
 @HiveType(typeId: 1)
 class Exercise {
-  @HiveField(0)
   final String name;
-  @HiveField(1)
   bool isCompleted;
-  @HiveField(2)
   final String? description;
-  @HiveField(3)
   final String? imageUrl;
-  @HiveField(4)
   final String? videoUrl;
 
   Exercise({
@@ -29,9 +24,7 @@ class Exercise {
 
 @HiveType(typeId: 2)
 class CustomExercise {
-  @HiveField(0)
   final String name;
-  @HiveField(1)
   final String muscleGroup;
   CustomExercise({required this.name, required this.muscleGroup});
 }
@@ -113,14 +106,19 @@ class WorkoutService extends ChangeNotifier {
     _customExercises = defaultExercises;
   }
   
+  // THIS IS THE MAIN LOGIC FIX
   void startWorkoutForDay(DateTime date) {
-    List<String> muscles = getMusclesForDay(date);
-    _currentWorkoutExercises = muscles
-        .map((muscle) => Exercise(
-              name: '$muscle Press',
-              description: 'A fundamental compound exercise that primarily targets the $muscle muscles. Maintain proper form for best results.',
+    List<String> musclesToTrain = getMusclesForDay(date);
+    List<CustomExercise> availableExercises = getExercisesForMuscleGroups(musclesToTrain);
+
+    // Convert CustomExercise to Exercise for the current session
+    _currentWorkoutExercises = availableExercises
+        .map((customEx) => Exercise(
+              name: customEx.name,
+              // You can add default descriptions or other properties here
             ))
         .toList();
+        
     for (var exercise in _currentWorkoutExercises) {
       exercise.isCompleted = false;
     }
