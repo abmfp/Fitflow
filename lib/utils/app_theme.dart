@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package.google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Define the solid background color
-  static const Color primaryBackgroundColor = Color(0xFF1F1D2B); 
-
   static final ThemeData darkTheme = ThemeData(
-    // Use the solid color for all screens
-    scaffoldBackgroundColor: primaryBackgroundColor,
+    scaffoldBackgroundColor: Colors.transparent,
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -21,18 +17,20 @@ class AppTheme {
       labelLarge: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
     cardTheme: CardThemeData(
-      color: const Color(0xFF3A384B).withOpacity(0.5),
+      color: Colors.white.withOpacity(0.1),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Colors.white.withOpacity(0.2)),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF252836),
+      backgroundColor: Colors.transparent, // Important for glassmorphism
       selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white54,
+      unselectedItemColor: Colors.white70,
       type: BottomNavigationBarType.fixed,
-      showUnselectedLabels: true,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
     ),
     chipTheme: ChipThemeData(
       backgroundColor: Colors.white.withOpacity(0.1),
@@ -44,5 +42,13 @@ class AppTheme {
       secondaryLabelStyle: const TextStyle(color: Color(0xFF1F1D2B)),
       brightness: Brightness.dark,
     )
+  );
+
+  static const BoxDecoration gradientBackground = BoxDecoration(
+    gradient: LinearGradient(
+      colors: [Color(0xFF000428), Color(0xFF004e92)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
   );
 }
