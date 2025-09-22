@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: const Color(0xFF1F1D2B),
+    scaffoldBackgroundColor: Colors.transparent, // Set to transparent to allow gradient
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -17,10 +17,11 @@ class AppTheme {
       labelLarge: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
     cardTheme: CardThemeData(
-      color: const Color(0xFF3A384B).withOpacity(0.5),
+      color: Colors.white.withOpacity(0.1),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Colors.white.withOpacity(0.2)),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -42,12 +43,12 @@ class AppTheme {
     )
   );
 
-  // This definition was missing
+  // New pinkish-purple gradient
   static const BoxDecoration gradientBackground = BoxDecoration(
     gradient: LinearGradient(
-      colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
+      colors: [Color(0xFF4e54c8), Color(0xFF8f94fb)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
     ),
   );
 }
