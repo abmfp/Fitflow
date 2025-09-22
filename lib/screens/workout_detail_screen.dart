@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'dart:ui';
-// --- ADD THIS LINE ---
-import 'package:video_player/video_player.dart'; 
+// import 'dart:ui'; // REMOVE THIS IMPORT as BackdropFilter is no longer used
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 class WorkoutDetailScreen extends StatefulWidget {
   final Exercise exercise;
@@ -16,6 +15,7 @@ class WorkoutDetailScreen extends StatefulWidget {
 
 class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
   VideoPlayerController? _videoController;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -24,10 +24,21 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
       _videoController = VideoPlayerController.file(File(widget.exercise.videoPath!))
         ..initialize().then((_) {
           if (mounted) {
-            _videoController?.setLooping(true);
-            setState(() {});
+            _videoController!.setLooping(true);
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        }).catchError((error) {
+          print("Error initializing video player: $error");
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
           }
         });
+    } else {
+      _isLoading = false;
     }
   }
 
@@ -45,7 +56,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: GradientContainer(
+      body: GradientContainer( // Uses the solid color now
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -99,13 +110,13 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
 
   Widget _buildMediaViewer(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 9 / 16,
+      aspectRatio: 16 / 9,
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.0),
+          color: Colors.white.withOpacity(0.15), // Base color for glassmorphism containers
+          borderRadius: BorderRadius.circular(20), // Rounded corners
+          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.0), // Subtle border
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -114,38 +125,27 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-            child: Container(
-              alignment: Alignment.center,
-              child: _videoController?.value.isInitialized ?? false
+        // REMOVE BackdropFilter for solid background
+        child: Container( // Simply a Container now
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(20.0),
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _videoController?.value.isInitialized ?? false
                   ? InkWell(
                       onTap: () => setState(() => _videoController!.value.isPlaying ? _videoController!.pause() : _videoController!.play()),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          SizedBox.expand(
-                            child: FittedBox(
-                              fit: BoxFit.cover,
-                              child: SizedBox(
-                                width: _videoController!.value.size.width,
-                                height: _videoController!.value.size.height,
-                                child: VideoPlayer(_videoController!),
-                              ),
-                            ),
-                          ),
+                          VideoPlayer(_videoController!),
                           if (!_videoController!.value.isPlaying)
                             Icon(Icons.play_arrow_rounded, color: Colors.white.withOpacity(0.7), size: 80),
                         ],
                       ),
                     )
                   : widget.exercise.imagePath != null && File(widget.exercise.imagePath!).existsSync()
-                      ? Image.file(File(widget.exercise.imagePath!), fit: BoxFit.cover, width: double.infinity, height: double.infinity)
-                      : const Center(child: Icon(Icons.image_outlined, color: Colors.white54, size: 80)),
-            ),
-          ),
+                      ? Image.file(File(widget.exercise.imagePath!), fit: BoxFit.cover)
+                      : const Center(child: Icon(Icons.video_off_outlined, color: Colors.white54, size: 80)),
         ),
       ),
     );
@@ -153,10 +153,11 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
 
   Widget _buildGlassmorphismContainer({required BuildContext context, required Widget child}) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.0),
+        color: Colors.white.withOpacity(0.15), // Base color for glassmorphism containers
+        borderRadius: BorderRadius.circular(20), // Rounded corners
+        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.0), // Subtle border
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -165,16 +166,11 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.all(20.0),
-            child: child,
-          ),
-        ),
+      // REMOVE BackdropFilter for solid background
+      child: Container( // Simply a Container now
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(20.0),
+        child: child,
       ),
     );
   }
