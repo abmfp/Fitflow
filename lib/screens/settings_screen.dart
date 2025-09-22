@@ -1,6 +1,8 @@
+import 'dart.io';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -17,12 +19,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: _userService.username);
+    // Add a listener to rebuild if the profile picture changes
+    _userService.addListener(_onDataChanged);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _userService.removeListener(_onDataChanged);
     super.dispose();
+  }
+
+  void _onDataChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _pickProfilePicture() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+
+    if (image != null) {
+      _userService.updateProfilePicture(image.path);
+    }
   }
 
   void _saveUsername() {
@@ -35,6 +55,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final imagePath = _userService.profilePicturePath;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -46,6 +68,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
+              // --- Profile Picture Section ---
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: const Color(0xFF3A384B),
+                backgroundImage: imagePath != null ? FileImage(File(imagePath)) : null,
+                child: imagePath == null ? const Icon(Icons.person, size: 60, color: Colors.white70) : null,
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: _pickProfilePicture,
+                child: const Text('Change Profile Picture'),
+              ),
+              const SizedBox(height: 30),
+
+              // --- Username Section ---
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
