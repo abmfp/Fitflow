@@ -20,6 +20,7 @@ dependencies:
   intl: ^0.18.1
   google_fonts: ^6.2.1
   flutter_animate: ^4.5.0
+  week_of_year: ^2.0.2
 
   # Local Database (Persistence)
   hive: ^2.2.3
