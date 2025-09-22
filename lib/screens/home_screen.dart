@@ -187,7 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Card(
         child: InkWell(
           onTap: () {
-            _workoutService.startWorkoutForDay(_selectedDate);
+            // This is the important change: pass the selected date to the service
+            _workoutService.startWorkoutForDay(_selectedDate); 
             Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WorkoutScreen()));
           },
           borderRadius: BorderRadius.circular(20),
