@@ -13,6 +13,26 @@ class WorkoutScreen extends StatefulWidget {
 class _WorkoutScreenState extends State<WorkoutScreen> {
   final WorkoutService _workoutService = WorkoutService();
 
+  // 1. Add listeners to make the screen reactive
+  @override
+  void initState() {
+    super.initState();
+    _workoutService.addListener(_onDataChanged);
+  }
+
+  @override
+  void dispose() {
+    _workoutService.removeListener(_onDataChanged);
+    super.dispose();
+  }
+
+  // This function tells the screen to rebuild when a checkbox is ticked
+  void _onDataChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _showSummaryDialog(int completedCount) {
     showDialog(
       context: context,
@@ -39,19 +59,24 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the title dynamically from the plan
+    final muscles = _workoutService.todaysExercises.map((e) => e.name.replaceAll(' Press', '')).toSet().toList();
+    final title = muscles.isEmpty ? 'Current Workout' : muscles.join(' & ');
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Current Workout'),
+        title: Text(title),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
+      // 2. The "Finish Workout" button is now correctly placed
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             backgroundColor: Colors.white,
-            foregroundColor: Theme.of(context).scaffoldBackgroundColor,
+            foregroundColor: const Color(0xFF1F1D2B),
           ),
           onPressed: _finishWorkout,
           child: const Text('Finish Workout', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -61,7 +86,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         child: _workoutService.todaysExercises.isEmpty
             ? const Center(child: Text("No workout started."))
             : ReorderableListView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                 itemCount: _workoutService.todaysExercises.length,
                 itemBuilder: (context, index) {
                   final exercise = _workoutService.todaysExercises[index];
@@ -87,6 +112,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               ),
                         ),
                         value: exercise.isCompleted,
+                        // 3. This now correctly calls the service
                         onChanged: (bool? value) {
                           _workoutService.toggleExerciseCompletion(exercise);
                         },
@@ -97,6 +123,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     ),
                   );
                 },
+                // 4. The reorder logic is now correctly implemented
                 onReorder: (int oldIndex, int newIndex) {
                   setState(() {
                     if (oldIndex < newIndex) {
