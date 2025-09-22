@@ -16,7 +16,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
   final WorkoutService _workoutService = WorkoutService();
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  bool _isExpanded = false; // To track the panel's state
+  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -64,7 +64,43 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
             Card(
               margin: const EdgeInsets.all(20),
               child: TableCalendar(
-                // ... Calendar properties are the same ...
+                firstDay: DateTime.utc(2020, 1, 1),
+                lastDay: DateTime.utc(2030, 12, 31),
+                focusedDay: _focusedDay,
+                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                    _isExpanded = false; // Collapse the panel when a new day is selected
+                  });
+                },
+                calendarStyle: CalendarStyle(
+                  outsideDaysVisible: false,
+                  todayDecoration: BoxDecoration(color: Colors.white.withOpacity(0.3), shape: BoxShape.circle),
+                  selectedDecoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                  selectedTextStyle: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
+                ),
+                headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
+                // This builder adds the checkmark
+                calendarBuilders: CalendarBuilders(
+                  defaultBuilder: (context, day, focusedDay) {
+                    final workouts = _getWorkoutsForDay(day);
+                    if (workouts.isNotEmpty) {
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Text('${day.day}'),
+                          const Positioned(
+                            bottom: 2,
+                            child: Icon(Icons.check_circle, color: Colors.green, size: 12),
+                          ),
+                        ],
+                      );
+                    }
+                    return null; // Return null to use default builder
+                  },
+                ),
               ),
             ),
             
@@ -74,7 +110,6 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                   : ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       children: [
-                        // The new, modern dropdown design
                         ExpansionPanelList(
                           elevation: 0,
                           expandedHeaderPadding: EdgeInsets.zero,
