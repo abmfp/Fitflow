@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class WorkoutDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildMediaPlaceholder(context),
+              _buildMediaViewer(context),
               const SizedBox(height: 30),
               Text('Description', style: Theme.of(context).textTheme.displayMedium),
               const SizedBox(height: 10),
@@ -38,17 +39,23 @@ class WorkoutDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMediaPlaceholder(BuildContext context) {
+  Widget _buildMediaViewer(BuildContext context) {
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: Container(
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Center(
-          child: Icon(Icons.image_outlined, color: Colors.white54, size: 80),
-        ),
+        child: exercise.imagePath != null && File(exercise.imagePath!).existsSync()
+            ? Image.file(
+                File(exercise.imagePath!),
+                fit: BoxFit.cover,
+              )
+            : const Center(
+                child: Icon(Icons.image_outlined, color: Colors.white54, size: 80),
+              ),
       ),
     );
   }
