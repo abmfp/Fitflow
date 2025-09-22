@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Define the solid background color based on your screenshot
-  static const Color primaryBackgroundColor = Color(0xFF1F1D2B); 
-
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: primaryBackgroundColor, // Use solid color here
+    scaffoldBackgroundColor: Colors.transparent, // Set to transparent to allow gradient
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -19,12 +16,12 @@ class AppTheme {
       bodyMedium: const TextStyle(fontSize: 14.0, color: Colors.white54),
       labelLarge: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
-    // Updated card theme to match the screenshot's style
     cardTheme: CardThemeData(
-      color: const Color(0xFF3A384B).withOpacity(0.5),
+      color: Colors.white.withOpacity(0.1),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Colors.white.withOpacity(0.2)),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -44,5 +41,14 @@ class AppTheme {
       secondaryLabelStyle: const TextStyle(color: Color(0xFF1F1D2B)),
       brightness: Brightness.dark,
     )
+  );
+
+  // New gradient to match the image you provided
+  static const BoxDecoration gradientBackground = BoxDecoration(
+    gradient: LinearGradient(
+      colors: [Color(0xFF000428), Color(0xFF004e92)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
   );
 }
