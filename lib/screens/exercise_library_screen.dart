@@ -51,6 +51,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF252836),
         title: const Text('Confirm Deletion'),
         content: Text('Are you sure you want to delete "${exercise.name}"?'),
         actions: [
@@ -58,7 +59,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
           TextButton(
             child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
             onPressed: () {
-              // In a real app, you would call a service method here.
+              _workoutService.deleteCustomExercise(exercise);
               Navigator.of(ctx).pop();
             },
           ),
@@ -81,7 +82,10 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToAddExercise,
         backgroundColor: Colors.white,
-        child: Icon(Icons.add, color: Theme.of(context).scaffoldBackgroundColor),
+        child: Icon(
+          Icons.add,
+          color: const Color(0xFF1F1D2B),
+        ),
       ),
       body: GradientContainer(
         child: ListView.builder(
