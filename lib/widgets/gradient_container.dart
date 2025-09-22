@@ -10,7 +10,6 @@ class GradientContainer extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      // Use the BoxDecoration with the gradient
       decoration: AppTheme.gradientBackground,
       child: child,
     );
