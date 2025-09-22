@@ -37,8 +37,16 @@ class CustomExercise extends HiveObject {
   String? imagePath;
   @HiveField(3)
   String? videoPath;
+  @HiveField(4)
+  String? description;
   
-  CustomExercise({required this.name, required this.muscleGroup, this.imagePath, this.videoPath});
+  CustomExercise({
+    required this.name, 
+    required this.muscleGroup, 
+    this.imagePath, 
+    this.videoPath, 
+    this.description
+  });
 }
 
 class WorkoutService extends ChangeNotifier {
@@ -115,12 +123,12 @@ class WorkoutService extends ChangeNotifier {
 
   void _addDefaultExercises() {
     final defaultExercises = [
-        CustomExercise(name: 'Deadlifts', muscleGroup: 'Back'),
-        CustomExercise(name: 'Barbell Incline Bench Press', muscleGroup: 'Chest'),
-        CustomExercise(name: 'Squats', muscleGroup: 'Legs'),
-        CustomExercise(name: 'Barbell Push Press', muscleGroup: 'Shoulders'),
-        CustomExercise(name: 'Lat Pulldowns', muscleGroup: 'Back'),
-        CustomExercise(name: 'Dumbbell Curls', muscleGroup: 'Biceps'),
+        CustomExercise(name: 'Deadlifts', muscleGroup: 'Back', description: 'A powerful full-body exercise.'),
+        CustomExercise(name: 'Barbell Incline Bench Press', muscleGroup: 'Chest', description: 'Targets the upper chest.'),
+        CustomExercise(name: 'Squats', muscleGroup: 'Legs', description: 'The ultimate lower body workout.'),
+        CustomExercise(name: 'Barbell Push Press', muscleGroup: 'Shoulders', description: 'Builds explosive shoulder strength.'),
+        CustomExercise(name: 'Lat Pulldowns', muscleGroup: 'Back', description: 'Great for building a wide back.'),
+        CustomExercise(name: 'Dumbbell Curls', muscleGroup: 'Biceps', description: 'Classic exercise for bicep peaks.'),
     ];
     for (var ex in defaultExercises) {
       _customExercisesBox.add(ex);
@@ -135,7 +143,7 @@ class WorkoutService extends ChangeNotifier {
     _currentWorkoutExercises = availableExercises
         .map((customEx) => Exercise(
               name: customEx.name,
-              description: "A sample description for ${customEx.name}.",
+              description: customEx.description,
               imagePath: customEx.imagePath,
               videoPath: customEx.videoPath,
             ))
@@ -214,6 +222,7 @@ class WorkoutService extends ChangeNotifier {
   void updateCustomExercise(CustomExercise oldExercise, CustomExercise newExerciseData) {
     oldExercise.imagePath = newExerciseData.imagePath;
     oldExercise.videoPath = newExerciseData.videoPath;
+    oldExercise.description = newExerciseData.description;
     oldExercise.save();
     notifyListeners();
   }
