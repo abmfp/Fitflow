@@ -82,48 +82,53 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToAddExercise,
         backgroundColor: Colors.white,
-        child: Icon(
-          Icons.add,
-          color: const Color(0xFF1F1D2B),
-        ),
+        child: Icon(Icons.add, color: const Color(0xFF1F1D2B)),
       ),
       body: GradientContainer(
-        child: ListView.builder(
-          padding: const EdgeInsets.all(20),
-          itemCount: muscleGroups.length,
-          itemBuilder: (context, index) {
-            final muscleGroup = muscleGroups[index];
-            final exercisesInGroup = grouped[muscleGroup]!;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0, bottom: 10.0),
-                  child: Text(muscleGroup, style: Theme.of(context).textTheme.displayMedium),
-                ),
-                ...exercisesInGroup.map((exercise) {
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    child: ListTile(
-                      leading: const Icon(Icons.fitness_center),
-                      title: Text(exercise.name),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(icon: const Icon(Icons.edit_outlined, size: 20), onPressed: () => _navigateToEditExercise(exercise)),
-                          IconButton(
-                            icon: Icon(Icons.delete_outline, size: 20, color: Theme.of(context).colorScheme.error),
-                            onPressed: () => _deleteExercise(exercise),
-                          ),
-                        ],
-                      ),
+        child: grouped.isEmpty
+          ? const Center(
+              child: Text(
+                'Your library is empty.\nTap the + button to add an exercise!',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, color: Colors.white70),
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: muscleGroups.length,
+              itemBuilder: (context, index) {
+                final muscleGroup = muscleGroups[index];
+                final exercisesInGroup = grouped[muscleGroup]!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0, bottom: 10.0),
+                      child: Text(muscleGroup, style: Theme.of(context).textTheme.displayMedium),
                     ),
-                  );
-                }),
-              ],
-            );
-          },
-        ),
+                    ...exercisesInGroup.map((exercise) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: ListTile(
+                          leading: const Icon(Icons.fitness_center),
+                          title: Text(exercise.name),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(icon: const Icon(Icons.edit_outlined, size: 20), onPressed: () => _navigateToEditExercise(exercise)),
+                              IconButton(
+                                icon: Icon(Icons.delete_outline, size: 20, color: Theme.of(context).colorScheme.error),
+                                onPressed: () => _deleteExercise(exercise),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                );
+              },
+            ),
       ),
     );
   }
