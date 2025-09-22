@@ -46,7 +46,6 @@ class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
       body: GradientContainer(
         child: Column(
           children: [
-            // Chart at the top
             if (chartData.isNotEmpty)
               Card(
                 margin: const EdgeInsets.all(20),
@@ -78,8 +77,6 @@ class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
                   ),
                 ),
               ),
-            
-            // List of entries below
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
