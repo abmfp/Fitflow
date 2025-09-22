@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 class GradientContainer extends StatelessWidget {
   final Widget child;
-
   const GradientContainer({super.key, required this.child});
 
   @override
@@ -11,7 +10,7 @@ class GradientContainer extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: AppTheme.gradientBackground,
+      color: AppTheme.primaryBackgroundColor, // Use the solid background color
       child: child,
     );
   }
