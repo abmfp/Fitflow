@@ -1,10 +1,11 @@
-import 'dart.io';
+import 'dart:io';
 import 'package:fitflow/screens/exercise_library_screen.dart';
 import 'package:fitflow/screens/settings_screen.dart';
 import 'package:fitflow/screens/workout_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -64,7 +65,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Row(
       children: [
-        // The avatar no longer has the Stack with the edit button
         CircleAvatar(
           radius: 40,
           backgroundColor: const Color(0xFF3A384B),
@@ -78,10 +78,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildOptionCard(BuildContext context, {required IconData icon, required String title, required String subtitle, required VoidCallback onTap}) {
-    // ... same as before ...
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: Card(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+            leading: Icon(icon, color: Colors.white, size: 28),
+            title: Text(title, style: Theme.of(context).textTheme.labelLarge),
+            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildLogoutButton(BuildContext context) {
-    // ... same as before ...
+    return Center(
+      child: TextButton(
+        onPressed: () {},
+        child: Text('Log Out', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.error)),
+      ),
+    );
   }
 }
