@@ -2,12 +2,10 @@ import 'package:fitflow/screens/weight_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/services/weight_service.dart';
-import 'package:fitflow/utils/app_theme.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
-import 'workout_screen.dart';
+import 'package:fitflow/screens/workout_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final WorkoutService _workoutService = WorkoutService();
   final UserService _userService = UserService();
   final WeightService _weightService = WeightService();
-
   late DateTime _selectedDate;
 
   @override
@@ -77,6 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  String _getMotivationalMessage(int streak) {
+    if (streak == 0) return "Let's start the week strong!";
+    if (streak < 3) return "Great start, keep it up!";
+    if (streak < 5) return "You're on fire! 🔥";
+    if (streak == 5) return "Almost there, finish strong!";
+    return "Weekly goal achieved! 🎉";
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<String> selectedDayMuscles = _workoutService.getMusclesForDay(_selectedDate);
@@ -89,64 +94,49 @@ class _HomeScreenState extends State<HomeScreen> {
     final String motivationalMessage = _getMotivationalMessage(streak);
 
     return Scaffold(
-      body: GradientContainer(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            children: [
-              _buildDateSelector(_selectedDate),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text('Get ready, ${_userService.username}', style: Theme.of(context).textTheme.displayLarge),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          children: [
+            _buildDateSelector(_selectedDate),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text('Get ready, ${_userService.username}', style: Theme.of(context).textTheme.displayLarge),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text('Here\'s your plan for ${DateFormat('EEEE').format(_selectedDate)}', style: Theme.of(context).textTheme.bodyLarge),
+            ),
+            const SizedBox(height: 30),
+            _buildWorkoutCard(context, workoutTitle, exerciseCount)
+                .animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
+            const SizedBox(height: 20),
+            _buildInfoCard(
+              context,
+              icon: Icons.monitor_weight_outlined,
+              title: 'Weight for ${DateFormat('d MMM').format(_selectedDate)}',
+              subtitle: weightDisplay,
+              trailing: IconButton(
+                icon: const Icon(Icons.add, color: Colors.white),
+                onPressed: () => _showAddWeightDialog(context, _selectedDate),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text('Here\'s your plan for ${DateFormat('EEEE').format(_selectedDate)}', style: Theme.of(context).textTheme.bodyLarge),
-              ),
-              const SizedBox(height: 24),
-              
-              _buildWorkoutCard(context, workoutTitle, exerciseCount)
-                  .animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
-
-              const SizedBox(height: 16),
-              
-              _buildInfoCard(
-                context,
-                icon: Icons.monitor_weight_outlined,
-                title: 'Weight for ${DateFormat('d MMM').format(_selectedDate)}',
-                subtitle: weightDisplay, 
-                trailing: IconButton(
-                  icon: const Icon(Icons.add, color: Colors.white),
-                  onPressed: () => _showAddWeightDialog(context, _selectedDate),
-                ),
-                onTap: () {
-                  Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
-                },
-              ).animate().fadeIn(duration: 500.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
-
-              const SizedBox(height: 16),
-              
-              _buildInfoCard(
-                context,
-                icon: Icons.local_fire_department_outlined,
-                title: 'Day $streak / 6',
-                subtitle: motivationalMessage,
-                onTap: widget.onNavigateToProgress,
-              ).animate().fadeIn(duration: 500.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
-            ],
-          ),
+              onTap: () {
+                Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const WeightHistoryScreen()));
+              },
+            ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
+            const SizedBox(height: 20),
+            _buildInfoCard(
+              context,
+              icon: Icons.local_fire_department_outlined,
+              title: 'Day $streak / 6',
+              subtitle: motivationalMessage,
+              onTap: widget.onNavigateToProgress,
+            ).animate().fadeIn(duration: 400.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
+          ],
         ),
       ),
     );
-  }
-
-  String _getMotivationalMessage(int streak) {
-    if (streak == 0) return "Let's start the week strong!";
-    if (streak < 3) return "Great start, keep it up!";
-    if (streak < 5) return "You're on fire! 🔥";
-    if (streak == 5) return "Almost there, finish strong!";
-    return "Weekly goal achieved! 🎉";
   }
 
   Widget _buildDateSelector(DateTime selectedDate) {
@@ -167,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 60,
               margin: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.white.withOpacity(0.1),
+                color: isSelected ? Colors.white : Colors.transparent,
                 borderRadius: BorderRadius.circular(30),
                 border: isSelected ? null : Border.all(color: Colors.white24),
               ),
@@ -203,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           borderRadius: BorderRadius.circular(20),
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(24.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -212,12 +202,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(title, style: Theme.of(context).textTheme.displayMedium),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Text('$count exercises', style: Theme.of(context).textTheme.bodyMedium),
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                const Icon(Icons.arrow_forward_ios, color: Colors.white70),
               ],
             ),
           ),
@@ -235,10 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             leading: Icon(icon, color: Colors.white, size: 28),
-            title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+            title: Text(title, style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 18)),
+            subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.normal)),
             trailing: trailing,
           ),
         ),
