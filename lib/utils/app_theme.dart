@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: Colors.transparent, // Set to transparent to allow gradient
+    scaffoldBackgroundColor: Colors.transparent, // Use transparent for gradient
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -43,7 +43,7 @@ class AppTheme {
     )
   );
 
-  // New gradient to match the image you provided
+  // Re-add the gradient definition
   static const BoxDecoration gradientBackground = BoxDecoration(
     gradient: LinearGradient(
       colors: [Color(0xFF000428), Color(0xFF004e92)],
