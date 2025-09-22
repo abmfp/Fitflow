@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -44,8 +46,17 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: const Color(0xFF252836),
         title: const Text('Workout Complete!'),
-        content: Text('Great job! You completed $completedCount exercises.'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.check_circle_outline_rounded, color: Colors.green, size: 60),
+            const SizedBox(height: 20),
+            Text('Great job! You finished $completedCount exercises.'),
+          ],
+        ).animate().fadeIn(duration: 400.ms),
         actions: [
           TextButton(
             child: const Text('OK'),
@@ -67,7 +78,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     final muscles = _workoutService.todaysExercises
-        .map((e) => _workoutService.customExercises.firstWhere((ce) => ce.name == e.name).muscleGroup)
+        .map((e) => _workoutService.customExercises.firstWhere((ce) => ce.name == e.name, orElse: () => CustomExercise(name: '', muscleGroup: 'Unknown')).muscleGroup)
         .toSet().toList();
     final title = muscles.isEmpty ? 'Current Workout' : muscles.join(' & ');
 
