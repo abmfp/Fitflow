@@ -75,6 +75,8 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                 },
                 eventLoader: _getWorkoutsForDay,
                 calendarStyle: CalendarStyle(
+                  // This is the fix to hide days from other months
+                  outsideDaysVisible: false, 
                   todayDecoration: BoxDecoration(color: Colors.white.withOpacity(0.3), shape: BoxShape.circle),
                   selectedDecoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                   selectedTextStyle: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
@@ -98,7 +100,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
                                 onTap: () {
                                    Navigator.push(
                                     context,
-                                    PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
+                                    PageTransition(type: Page-TransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
                                   );
                                 },
                                 title: Text(exercise.name),
