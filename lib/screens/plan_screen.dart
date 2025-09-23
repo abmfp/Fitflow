@@ -1,9 +1,9 @@
 import 'package:fitflow/screens/plan_detail_screen.dart';
-import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
-import 'package:fitflow/widgets/glass_card.dart';
-import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package.fitflow/services/workout_service.dart';
+import 'package.fitflow/widgets/gradient_container.dart';
+import 'package.fitflow/widgets/glass_card.dart';
+import 'package.flutter/material.dart';
+import 'package.page_transition/page_transition.dart';
 
 class PlanScreen extends StatefulWidget {
   const PlanScreen({super.key});
@@ -41,10 +41,7 @@ class _PlanScreenState extends State<PlanScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: Colors.white.withOpacity(0.2)),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.white.withOpacity(0.2))),
           backgroundColor: const Color(0xFF252836).withOpacity(0.85),
           title: Text('Edit Plan for $day'),
           content: StatefulBuilder(
@@ -92,32 +89,34 @@ class _PlanScreenState extends State<PlanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
-          children: [
-            Text('Weekly Plan', style: Theme.of(context).textTheme.displayLarge),
-            const SizedBox(height: 20),
-            ..._workoutService.weeklyPlan.map((plan) {
-              final day = plan['day']!;
-              final muscles = List<String>.from(plan['muscles']);
-              return _buildDayCard(
-                context,
-                day: day,
-                muscles: muscles,
-                onEdit: () => _showEditMusclesDialog(day),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: PlanDetailScreen(day: day, muscles: muscles),
-                    ),
-                  );
-                },
-              );
-            }).toList(),
-          ],
+      body: GradientContainer(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+            children: [
+              Text('Weekly Plan', style: Theme.of(context).textTheme.displayLarge),
+              const SizedBox(height: 20),
+              ..._workoutService.weeklyPlan.map((plan) {
+                final day = plan['day']!;
+                final muscles = List<String>.from(plan['muscles']);
+                return _buildDayCard(
+                  context,
+                  day: day,
+                  muscles: muscles,
+                  onEdit: () => _showEditMusclesDialog(day),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: PlanDetailScreen(day: day, muscles: muscles),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+            ],
+          ),
         ),
       ),
     );
