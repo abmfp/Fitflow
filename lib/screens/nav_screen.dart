@@ -3,6 +3,7 @@ import 'package:fitflow/screens/plan_screen.dart';
 import 'package:fitflow/screens/profile_screen.dart';
 import 'package:fitflow/screens/progress_screen.dart';
 import 'package:fitflow/widgets/glass_card.dart';
+import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 
 class NavScreen extends StatefulWidget {
@@ -20,9 +21,7 @@ class _NavScreenState extends State<NavScreen> {
   void initState() {
     super.initState();
     _screens = [
-      HomeScreen(
-        onNavigateToProgress: () => _onItemTapped(1),
-      ),
+      HomeScreen(onNavigateToProgress: () => _onItemTapped(1)),
       const ProgressScreen(),
       const PlanScreen(),
       const ProfileScreen(),
@@ -37,10 +36,13 @@ class _NavScreenState extends State<NavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: _buildModernNavBar(),
+    return GradientContainer(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
+        body: _screens[_selectedIndex],
+        bottomNavigationBar: _buildModernNavBar(),
+      ),
     );
   }
 
@@ -48,9 +50,9 @@ class _NavScreenState extends State<NavScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       child: GlassCard(
-        padding: EdgeInsets.zero, // Remove padding from the card itself
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: SizedBox(
-          height: 65, // Constrain the height of the navigation bar
+          height: 65,
           child: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
