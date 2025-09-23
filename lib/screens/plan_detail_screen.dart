@@ -1,5 +1,4 @@
 import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 
 class PlanDetailScreen extends StatelessWidget {
@@ -19,7 +18,7 @@ class PlanDetailScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: GradientContainer(
+      body: SafeArea(
         child: exercises.isEmpty
             ? const Center(child: Text("No exercises found for these muscle groups in your library."))
             : ListView.builder(
