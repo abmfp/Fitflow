@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
+import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -101,7 +101,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           child: const Text('Finish Workout', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
       ),
-      body: GradientContainer(
+      body: BackgroundContainer(
         child: _workoutService.todaysExercises.isEmpty
             ? const Center(child: Text("No workout for today."))
             : ReorderableListView.builder(
