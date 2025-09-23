@@ -5,6 +5,7 @@ import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
   const WorkoutHistoryScreen({super.key});
@@ -53,7 +54,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
     final workoutsForSelectedDay = _getWorkoutsForDay(_selectedDay!);
     final workoutTitle = _getMuscleGroupsForWorkout(workoutsForSelectedDay);
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Workout History'),
         backgroundColor: Colors.transparent,
