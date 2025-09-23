@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final int streak = _workoutService.weeklyWorkoutCount;
     final String motivationalMessage = _getMotivationalMessage(streak);
 
-    return Scaffold(
+    return AppScaffold(
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 20.0),
