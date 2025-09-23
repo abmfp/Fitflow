@@ -1,6 +1,5 @@
 import 'package:fitflow/screens/plan_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
 import 'package:fitflow/widgets/glass_card.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -71,34 +70,32 @@ class _PlanScreenState extends State<PlanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GradientContainer(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(20.0),
-            children: [
-              Text('Weekly Plan', style: Theme.of(context).textTheme.displayLarge),
-              const SizedBox(height: 20),
-              ..._workoutService.weeklyPlan.map((plan) {
-                final day = plan['day']!;
-                final muscles = List<String>.from(plan['muscles']);
-                return _buildDayCard(
-                  context,
-                  day: day,
-                  muscles: muscles,
-                  onEdit: () => _showEditMusclesDialog(day),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeft,
-                        child: PlanDetailScreen(day: day, muscles: muscles),
-                      ),
-                    );
-                  },
-                );
-              }).toList(),
-            ],
-          ),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+          children: [
+            Text('Weekly Plan', style: Theme.of(context).textTheme.displayLarge),
+            const SizedBox(height: 20),
+            ..._workoutService.weeklyPlan.map((plan) {
+              final day = plan['day']!;
+              final muscles = List<String>.from(plan['muscles']);
+              return _buildDayCard(
+                context,
+                day: day,
+                muscles: muscles,
+                onEdit: () => _showEditMusclesDialog(day),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: PlanDetailScreen(day: day, muscles: muscles),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ],
         ),
       ),
     );
