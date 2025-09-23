@@ -37,12 +37,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _pickProfilePicture() async {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+
     if (image != null) {
       _userService.updateProfilePicture(image.path);
     }
   }
 
-  // New method to pick the background
   Future<void> _pickBackgroundImage() async {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
@@ -78,14 +78,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             CircleAvatar(
               radius: 50,
               backgroundColor: const Color(0xFF3A384B),
-              backgroundImage: imagePath != null ? FileImage(File(imagePath)) : null,
-              child: imagePath == null ? const Icon(Icons.person, size: 60, color: Colors.white70) : null,
+              backgroundImage: imagePath != null && File(imagePath).existsSync() ? FileImage(File(imagePath)) : null,
+              child: imagePath == null || !File(imagePath).existsSync() ? const Icon(Icons.person, size: 60, color: Colors.white70) : null,
             ),
             const SizedBox(height: 10),
-            TextButton(onPressed: _pickProfilePicture, child: const Text('Change Profile Picture')),
+            TextButton(
+              onPressed: _pickProfilePicture,
+              child: const Text('Change Profile Picture'),
+            ),
             const Divider(height: 40),
-
-            // New section for background
             Text('Customization', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 10),
             ListTile(
@@ -95,17 +96,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: _pickBackgroundImage,
             ),
             const Divider(height: 40),
-
             Text('Account', style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 20),
             TextFormField(
               controller: _nameController,
-              decoration: InputDecoration( /* ... */ ),
+              decoration: InputDecoration(
+                labelText: 'Username',
+                filled: true,
+                fillColor: Theme.of(context).cardTheme.color,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+              ),
             ),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: _saveUsername,
-              style: ElevatedButton.styleFrom( /* ... */ ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF1F1D2B),
+                minimumSize: const Size(double.infinity, 50),
+              ),
               child: const Text('Save Username', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
