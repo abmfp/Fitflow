@@ -14,38 +14,17 @@ class WorkoutScreen extends StatefulWidget {
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
   final WorkoutService _workoutService = WorkoutService();
-  Timer? _timer;
-  Duration _duration = Duration.zero;
 
   @override
   void initState() {
     super.initState();
     _workoutService.addListener(_onDataChanged);
-    _startTimer();
   }
 
   @override
   void dispose() {
     _workoutService.removeListener(_onDataChanged);
-    _timer?.cancel();
     super.dispose();
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) {
-        setState(() {
-          _duration = Duration(seconds: _duration.inSeconds + 1);
-        });
-      }
-    });
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
   void _onDataChanged() {
@@ -63,15 +42,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   }
 
   void _showSummaryDialog(int completedCount) {
-    _timer?.cancel();
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Colors.white.withOpacity(0.2)),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.white.withOpacity(0.2))),
         backgroundColor: const Color(0xFF252836).withOpacity(0.85),
         title: const Text('Workout Complete!', textAlign: TextAlign.center),
         content: Column(
@@ -79,7 +54,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           children: [
             const Icon(Icons.check_circle_outline_rounded, color: Colors.green, size: 60),
             const SizedBox(height: 20),
-            Text('Great job! You finished $completedCount exercises in ${_formatDuration(_duration)}.'),
+            Text('Great job! You finished $completedCount exercises.'),
           ],
         ).animate().fadeIn(duration: 400.ms),
         actionsAlignment: MainAxisAlignment.center,
@@ -113,17 +88,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         title: Text(title),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Center(
-              child: Text(
-                _formatDuration(_duration),
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-            ),
-          ),
-        ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(20.0),
