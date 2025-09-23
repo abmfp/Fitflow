@@ -1,6 +1,6 @@
 import 'package:fitflow/screens/edit_exercise_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
+import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -84,7 +84,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
         backgroundColor: Colors.white,
         child: Icon(Icons.add, color: const Color(0xFF1F1D2B)),
       ),
-      body: GradientContainer(
+      body: BackgroundContainer(
         child: grouped.isEmpty
           ? const Center(
               child: Text(
