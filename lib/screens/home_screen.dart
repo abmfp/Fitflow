@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icons.local_fire_department_outlined,
               title: 'Day $streak / 6',
               subtitle: motivationalMessage,
-              onTap: null, // This card is not tappable
+              onTap: null,
             ).animate().fadeIn(duration: 400.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
           ],
         ),
