@@ -1,5 +1,6 @@
 import 'package:fitflow/services/workout_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 
 class PlanDetailScreen extends StatelessWidget {
   final String day;
@@ -12,7 +13,7 @@ class PlanDetailScreen extends StatelessWidget {
     final WorkoutService workoutService = WorkoutService();
     final List<CustomExercise> exercises = workoutService.getExercisesForMuscleGroups(muscles);
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: Text('Plan for $day'),
         backgroundColor: Colors.transparent,
