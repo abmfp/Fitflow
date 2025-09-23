@@ -2,6 +2,7 @@ import 'package:fitflow/screens/home_screen.dart';
 import 'package:fitflow/screens/plan_screen.dart';
 import 'package:fitflow/screens/profile_screen.dart';
 import 'package:fitflow/screens/progress_screen.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class NavScreen extends StatefulWidget {
