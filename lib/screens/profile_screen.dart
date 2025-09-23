@@ -2,11 +2,10 @@ import 'dart:io';
 import 'package:fitflow/screens/exercise_library_screen.dart';
 import 'package:fitflow/screens/settings_screen.dart';
 import 'package:fitflow/screens/workout_history_screen.dart';
-import 'package.fitflow/services/user_service.dart';
-import 'package.fitflow/widgets/gradient_container.dart';
-import 'package.fitflow/widgets/glass_card.dart';
-import 'package.flutter/material.dart';
-import 'package.page_transition/page_transition.dart';
+import 'package:fitflow/services/user_service.dart';
+import 'package:fitflow/widgets/glass_card.dart';
+import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
+import 'package:page_transition/page_transition.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -21,16 +20,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _userService.addListener(_onDataChanged);
+    _userService.addListener(_onUserChanged);
   }
 
   @override
   void dispose() {
-    _userService.removeListener(_onDataChanged);
+    _userService.removeListener(_onUserChanged);
     super.dispose();
   }
 
-  void _onDataChanged() {
+  void _onUserChanged() {
     if (mounted) {
       setState(() {});
     }
@@ -39,20 +38,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GradientContainer(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildProfileHeader(context),
-                const SizedBox(height: 30),
-                _buildOptionCard(context, icon: Icons.list_alt_rounded, title: 'Exercise Library', subtitle: 'View all your exercises', onTap: () => Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const ExerciseLibraryScreen()))),
-                _buildOptionCard(context, icon: Icons.history_rounded, title: 'Workout Log', subtitle: 'See your past workouts', onTap: () => Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const WorkoutHistoryScreen()))),
-                _buildOptionCard(context, icon: Icons.settings_rounded, title: 'Settings', subtitle: 'App preferences', onTap: () => Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const SettingsScreen()))),
-              ],
-            ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildProfileHeader(context),
+              const SizedBox(height: 30),
+              _buildOptionCard(context, icon: Icons.list_alt_rounded, title: 'Exercise Library', subtitle: 'View all your exercises', onTap: () => Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const ExerciseLibraryScreen()))),
+              _buildOptionCard(context, icon: Icons.history_rounded, title: 'Workout Log', subtitle: 'See your past workouts', onTap: () => Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const WorkoutHistoryScreen()))),
+              _buildOptionCard(context, icon: Icons.settings_rounded, title: 'Settings', subtitle: 'App preferences', onTap: () => Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const SettingsScreen()))),
+            ],
           ),
         ),
       ),
