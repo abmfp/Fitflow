@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Define the solid background color from your screenshots
-  static const Color primaryBackgroundColor = Color(0xFF000428); 
-
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: primaryBackgroundColor, // Use solid color here
+    scaffoldBackgroundColor: Colors.transparent, // Use transparent for gradient
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -27,9 +24,8 @@ class AppTheme {
         side: BorderSide(color: Colors.white.withOpacity(0.2)),
       ),
     ),
-    // Updated theme for the bottom navigation bar
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF252836), // A distinct, dark color for the bar
+      backgroundColor: Color(0xFF252836),
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white70,
       type: BottomNavigationBarType.fixed,
@@ -46,5 +42,14 @@ class AppTheme {
       secondaryLabelStyle: const TextStyle(color: Color(0xFF1F1D2B)),
       brightness: Brightness.dark,
     )
+  );
+
+  // This definition was missing
+  static const BoxDecoration gradientBackground = BoxDecoration(
+    gradient: LinearGradient(
+      colors: [Color(0xFF000428), Color(0xFF004e92)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
   );
 }
