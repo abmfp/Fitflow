@@ -19,7 +19,7 @@ class _NavScreenState extends State<NavScreen> {
   void initState() {
     super.initState();
     _screens = [
-      HomeScreen(onNavigateToProgress: () => _onItemTapped(1)),
+      const HomeScreen(),
       const ProgressScreen(),
       const PlanScreen(),
       const ProfileScreen(),
@@ -37,7 +37,6 @@ class _NavScreenState extends State<NavScreen> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
-        // This container adds the rounded corners and shadow
         decoration: BoxDecoration(
           color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
           borderRadius: const BorderRadius.only(
@@ -65,8 +64,7 @@ class _NavScreenState extends State<NavScreen> {
             ],
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
-            // Use the theme for styling
-            backgroundColor: Colors.transparent, // Let the container handle color
+            backgroundColor: Colors.transparent,
             elevation: 0,
             type: Theme.of(context).bottomNavigationBarTheme.type,
             selectedItemColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
