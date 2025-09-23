@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
+import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -59,7 +59,7 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: GradientContainer(
+      body: BackgroundContainer(
         child: Column(
           children: [
             _buildGlassmorphismContainer(
