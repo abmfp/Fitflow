@@ -73,6 +73,7 @@ class WorkoutService extends ChangeNotifier {
   List<CustomExercise> _customExercises = [];
   int _weeklyWorkoutCount = 0;
   int _lastWorkoutWeek = 0;
+  late DateTime _activeWorkoutDate;
 
   List<Map<String, dynamic>> get weeklyPlan => _weeklyPlan;
   Map<DateTime, List<Exercise>> get workoutHistory => _workoutHistory;
@@ -137,6 +138,7 @@ class WorkoutService extends ChangeNotifier {
   }
   
   void startWorkoutForDay(DateTime date) {
+    _activeWorkoutDate = date;
     List<String> musclesToTrain = getMusclesForDay(date);
     List<CustomExercise> availableExercises = getExercisesForMuscleGroups(musclesToTrain);
 
@@ -164,9 +166,9 @@ class WorkoutService extends ChangeNotifier {
     }
     
     if (completedExercises.isNotEmpty) {
-      final today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-      _workoutHistory[today] = completedExercises;
-      _historyBox.put(today.toIso8601String(), completedExercises);
+      final dateToLog = DateTime.utc(_activeWorkoutDate.year, _activeWorkoutDate.month, _activeWorkoutDate.day);
+      _workoutHistory[dateToLog] = completedExercises;
+      _historyBox.put(dateToLog.toIso8601String(), completedExercises);
     }
     
     int currentWeek = DateTime.now().weekOfYear;
