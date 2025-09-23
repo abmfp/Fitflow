@@ -1,5 +1,5 @@
 import 'package:fitflow/services/weight_service.dart';
-import 'package:fitflow/widgets/gradient_container.dart';
+import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -63,7 +63,7 @@ class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: GradientContainer(
+      body: BackgroundContainer(
         child: Column(
           children: [
             if (chartData.isNotEmpty)
