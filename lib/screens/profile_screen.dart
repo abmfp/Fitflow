@@ -4,7 +4,7 @@ import 'package:fitflow/screens/settings_screen.dart';
 import 'package:fitflow/screens/workout_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/widgets/glass_card.dart';
-import 'package:flutter/material.dart'; // <-- THIS LINE WAS MISSING
+import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -40,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
