@@ -1,5 +1,6 @@
 import 'package:fitflow/screens/edit_exercise_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
