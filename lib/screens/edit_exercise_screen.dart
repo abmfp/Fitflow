@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
