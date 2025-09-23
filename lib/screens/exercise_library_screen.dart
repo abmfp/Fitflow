@@ -73,7 +73,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
     final grouped = _groupedExercises;
     final muscleGroups = grouped.keys.toList();
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Exercise Library'),
         backgroundColor: Colors.transparent,
