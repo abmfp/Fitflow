@@ -6,6 +6,7 @@ import 'package:fitflow/widgets/glass_card.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ProgressScreen extends StatefulWidget {
@@ -41,7 +42,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
