@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: Colors.transparent, // Required for gradient
+    scaffoldBackgroundColor: Colors.transparent, // This is required for the gradient
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -32,23 +32,15 @@ class AppTheme {
       showSelectedLabels: false,
       showUnselectedLabels: false,
     ),
-    chipTheme: ChipThemeData(
-      backgroundColor: Colors.white.withOpacity(0.1),
-      disabledColor: Colors.grey,
-      selectedColor: Colors.white,
-      secondarySelectedColor: Colors.white,
-      padding: const EdgeInsets.all(8.0),
-      labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
-      secondaryLabelStyle: const TextStyle(color: Color(0xFF1F1D2B)),
-      brightness: Brightness.dark,
-    )
+    // ... other theme properties
   );
 
+  // Define the gradient that will be used everywhere
   static const BoxDecoration gradientBackground = BoxDecoration(
     gradient: LinearGradient(
-      colors: [Color(0xFFFF2CDF), Color(0xFF0014FF)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+      colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
     ),
   );
 }
