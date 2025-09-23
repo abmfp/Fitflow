@@ -37,9 +37,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _pickProfilePicture() async {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-
     if (image != null) {
       _userService.updateProfilePicture(image.path);
+    }
+  }
+
+  // New method to pick the background
+  Future<void> _pickBackgroundImage() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    if (image != null) {
+      _userService.updateBackgroundImage(image.path);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Background updated!')),
+      );
     }
   }
 
@@ -48,7 +59,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Username updated!')),
     );
-    Navigator.of(context).pop();
   }
 
   @override
@@ -61,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
@@ -72,33 +82,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: imagePath == null ? const Icon(Icons.person, size: 60, color: Colors.white70) : null,
             ),
             const SizedBox(height: 10),
-            TextButton(
-              onPressed: _pickProfilePicture,
-              child: const Text('Change Profile Picture'),
+            TextButton(onPressed: _pickProfilePicture, child: const Text('Change Profile Picture')),
+            const Divider(height: 40),
+
+            // New section for background
+            Text('Customization', style: Theme.of(context).textTheme.displayMedium),
+            const SizedBox(height: 10),
+            ListTile(
+              title: const Text('Background Image'),
+              subtitle: const Text('Select a custom background for the app'),
+              trailing: const Icon(Icons.image_outlined),
+              onTap: _pickBackgroundImage,
             ),
-            const SizedBox(height: 30),
+            const Divider(height: 40),
+
+            Text('Account', style: Theme.of(context).textTheme.displayMedium),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Username',
-                filled: true,
-                fillColor: Theme.of(context).cardTheme.color,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-              ),
+              decoration: InputDecoration( /* ... */ ),
             ),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: _saveUsername,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF1F1D2B),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text('Save Changes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom( /* ... */ ),
+              child: const Text('Save Username', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
