@@ -1,13 +1,13 @@
 import 'package:fitflow/screens/weight_history_screen.dart';
-import 'package.fitflow/services/user_service.dart';
-import 'package.fitflow/services/workout_service.dart';
-import 'package.fitflow/services/weight_service.dart';
-import 'package.flutter/material.dart';
-import 'package.intl/intl.dart';
-import 'package.page_transition/page_transition.dart';
+import 'package:fitflow/services/user_service.dart';
+import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/services/weight_service.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:fitflow/screens/workout_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package.fitflow/widgets/glass_card.dart';
+import 'package:fitflow/widgets/glass_card.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToProgress;
@@ -51,17 +51,38 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Colors.white.withOpacity(0.2)),
+        ),
+        backgroundColor: const Color(0xFF252836).withOpacity(0.8),
         title: Text('Log Weight for ${DateFormat('d MMM').format(date)}'),
         content: TextField(
           controller: weightController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           autofocus: true,
-          decoration: const InputDecoration(labelText: 'Weight (kg)', suffixText: 'kg'),
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            labelText: 'Weight (kg)',
+            suffixText: 'kg',
+            labelStyle: const TextStyle(color: Colors.white70),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.white),
+            ),
+          ),
         ),
         actions: [
-          TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(ctx).pop()),
           TextButton(
-            child: const Text('Save'),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+          TextButton(
+            child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             onPressed: () {
               final double? weight = double.tryParse(weightController.text);
               if (weight != null) {
@@ -97,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          padding: const EdgeInsets.fromLTRB(0, 10, 0, 120),
           children: [
             _buildDateSelector(_selectedDate),
             const SizedBox(height: 30),
