@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:fitflow/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -65,7 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final imagePath = _userService.profilePicturePath;
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Settings'),
         backgroundColor: Colors.transparent,
