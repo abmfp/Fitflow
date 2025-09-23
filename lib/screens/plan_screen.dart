@@ -72,7 +72,7 @@ class _PlanScreenState extends State<PlanScreen> {
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+          padding: const EdgeInsets.all(20.0),
           children: [
             Text('Weekly Plan', style: Theme.of(context).textTheme.displayLarge),
             const SizedBox(height: 20),
