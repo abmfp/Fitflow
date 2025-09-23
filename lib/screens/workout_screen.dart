@@ -1,12 +1,11 @@
-import 'dart:async';
-import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/glass_card.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:lottie/lottie.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
+
   @override
   State<WorkoutScreen> createState() => _WorkoutScreenState();
 }
@@ -17,148 +16,141 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   @override
   void initState() {
     super.initState();
-    _workoutService.addListener(_onDataChanged);
+    _workoutService.addListener(_onWorkoutChanged);
   }
 
   @override
   void dispose() {
-    _workoutService.removeListener(_onDataChanged);
+    _workoutService.removeListener(_onWorkoutChanged);
     super.dispose();
   }
 
-  void _onDataChanged() {
+  void _onWorkoutChanged() {
     if (mounted) {
       setState(() {});
-      if (_workoutService.todaysExercises.isNotEmpty &&
-          _workoutService.todaysExercises.every((ex) => ex.isCompleted)) {
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted) {
-            _finishWorkout();
-          }
-        });
-      }
     }
   }
 
-  void _showSummaryDialog(int completedCount) {
+  void _showWorkoutCompleteDialog(BuildContext context, int exercisesCompleted) {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: const Color(0xFF252836),
-        title: const Text('Workout Complete!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.check_circle_outline_rounded, color: Colors.green, size: 60),
-            const SizedBox(height: 20),
-            Text('Great job! You finished $completedCount exercises.'),
-          ],
-        ).animate().fadeIn(duration: 400.ms),
-        actions: [
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pop();
-            },
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.white.withOpacity(0.2)),
           ),
-        ],
-      ),
+          backgroundColor: const Color(0xFF252836).withOpacity(0.8), // Glassy background
+          title: const Text(
+            'Workout Complete!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Lottie.asset(
+                'assets/animations/check.json',
+                repeat: false,
+                height: 100,
+                width: 100,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Great job! You finished $exercisesCompleted exercises.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white70),
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Pop twice to go back to home
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ),
+          ],
+        );
+      },
     );
-  }
-
-  void _finishWorkout() {
-    final int completedCount = _workoutService.finishCurrentWorkout();
-    _showSummaryDialog(completedCount);
   }
 
   @override
   Widget build(BuildContext context) {
-    final muscles = _workoutService.todaysExercises
-        .map((e) => _workoutService.customExercises.firstWhere((ce) => ce.name == e.name, orElse: () => CustomExercise(name: '', muscleGroup: 'Unknown')).muscleGroup)
-        .toSet().toList();
-    final title = muscles.isEmpty ? 'Current Workout' : muscles.join(' & ');
+    final List<Exercise> todaysExercises = _workoutService.todaysExercises;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        title: const Text('Current Workout'),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xFF1F1D2B),
-          ),
-          onPressed: _finishWorkout,
-          child: const Text('Finish Workout', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(20.0),
+                itemCount: todaysExercises.length,
+                itemBuilder: (context, index) {
+                  final exercise = todaysExercises[index];
+                  return GlassCard(
+                    onTap: () {
+                      // Navigate to exercise detail if needed
+                    },
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(exercise.name, style: Theme.of(context).textTheme.labelLarge),
+                      subtitle: exercise.description != null && exercise.description!.isNotEmpty
+                          ? Text(exercise.description!, style: Theme.of(context).textTheme.bodyMedium)
+                          : null,
+                      trailing: Checkbox(
+                        value: exercise.isCompleted,
+                        onChanged: (bool? value) {
+                          _workoutService.toggleExerciseCompletion(exercise);
+                        },
+                        activeColor: Colors.white,
+                        checkColor: const Color(0xFF1F1D2B),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: ElevatedButton(
+                onPressed: _workoutService.todaysExercises.isNotEmpty
+                    ? () {
+                        int completed = _workoutService.finishCurrentWorkout();
+                        _showWorkoutCompleteDialog(context, completed);
+                      }
+                    : null, // Disable button if no exercises
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF1F1D2B),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  'Finish Workout',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      body: _workoutService.todaysExercises.isEmpty
-          ? const Center(child: Text("No workout for today."))
-          : ReorderableListView.builder(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              itemCount: _workoutService.todaysExercises.length,
-              // This is the new property that fixes the bug
-              proxyDecorator: (Widget child, int index, Animation<double> animation) {
-                return Material(
-                  color: Colors.transparent,
-                  child: child,
-                );
-              },
-              itemBuilder: (context, index) {
-                final exercise = _workoutService.todaysExercises[index];
-                return Card(
-                  key: Key(exercise.name),
-                  margin: const EdgeInsets.only(bottom: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.5),
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.fade,
-                          child: WorkoutDetailScreen(exercise: exercise),
-                        ),
-                      );
-                    },
-                    contentPadding: const EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8),
-                    leading: Checkbox(
-                      value: exercise.isCompleted,
-                      onChanged: (bool? value) {
-                        _workoutService.toggleExerciseCompletion(exercise);
-                      },
-                      activeColor: Colors.white,
-                      checkColor: const Color(0xFF1F1D2B),
-                    ),
-                    title: Text(
-                      exercise.name,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            decoration: exercise.isCompleted ? TextDecoration.lineThrough : null,
-                          ),
-                    ),
-                    trailing: const Icon(Icons.drag_handle_rounded, color: Colors.white70),
-                  ),
-                );
-              },
-              onReorder: (int oldIndex, int newIndex) {
-                setState(() {
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-                  final Exercise item = _workoutService.todaysExercises.removeAt(oldIndex);
-                  _workoutService.todaysExercises.insert(newIndex, item);
-                });
-              },
-            ),
     );
   }
 }
