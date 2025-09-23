@@ -2,7 +2,6 @@ import 'package:fitflow/screens/home_screen.dart';
 import 'package:fitflow/screens/plan_screen.dart';
 import 'package:fitflow/screens/profile_screen.dart';
 import 'package:fitflow/screens/progress_screen.dart';
-import 'package:fitflow/widgets/glass_card.dart'; // Import the GlassCard
 import 'package:flutter/material.dart';
 
 class NavScreen extends StatefulWidget {
@@ -38,19 +37,27 @@ class _NavScreenState extends State<NavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // This allows the main screen content to extend behind the navbar
-      extendBody: true,
+      extendBody: true, // Allows content to go behind the navbar
       body: _screens[_selectedIndex],
       bottomNavigationBar: _buildModernNavBar(),
     );
   }
 
-  // New helper widget for the modern navigation bar
   Widget _buildModernNavBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-      child: GlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 24), // Wider margin
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
         child: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
@@ -60,16 +67,14 @@ class _NavScreenState extends State<NavScreen> {
           ],
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          
-          // These properties fix the appearance
-          backgroundColor: Colors.transparent, // Make the navbar itself transparent
+          // Use the theme for colors and properties
+          backgroundColor: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          type: Theme.of(context).bottomNavigationBarTheme.type,
+          selectedItemColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+          unselectedItemColor: Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
+          showSelectedLabels: Theme.of(context).bottomNavigationBarTheme.showSelectedLabels,
+          showUnselectedLabels: Theme.of(context).bottomNavigationBarTheme.showUnselectedLabels,
           elevation: 0,
-          type: BottomNavigationBarType.fixed, // This ensures icons are centered
-          
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white70,
-          showSelectedLabels: false, // Hides labels for a cleaner look
-          showUnselectedLabels: false,
         ),
       ),
     );
