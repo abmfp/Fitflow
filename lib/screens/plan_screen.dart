@@ -1,5 +1,6 @@
 import 'package:fitflow/screens/plan_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 import 'package:fitflow/widgets/glass_card.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -87,7 +88,7 @@ class _PlanScreenState extends State<PlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20.0),
