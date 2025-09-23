@@ -1,4 +1,4 @@
-import 'dart.io';
+import 'dart:io';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/utils/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -40,17 +40,17 @@ class _BackgroundContainerState extends State<BackgroundContainer> {
       width: double.infinity,
       height: double.infinity,
       decoration: imagePath != null && File(imagePath).existsSync()
-        ? BoxDecoration( // Use this decoration if an image is selected
+        ? BoxDecoration(
             image: DecorationImage(
               image: FileImage(File(imagePath)),
               fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode( // Dark overlay for readability
+              colorFilter: ColorFilter.mode(
                 Colors.black.withOpacity(0.6),
                 BlendMode.darken,
               ),
             ),
           )
-        : AppTheme.defaultGradientBackground, // Use this if no image is selected
+        : AppTheme.defaultGradientBackground,
       child: widget.child,
     );
   }
