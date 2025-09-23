@@ -101,7 +101,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: Text(isEditMode ? 'Edit Exercise' : 'Add Exercise'),
         backgroundColor: Colors.transparent,
