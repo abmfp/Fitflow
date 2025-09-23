@@ -2,31 +2,24 @@ import 'package:fitflow/screens/home_screen.dart';
 import 'package:fitflow/screens/plan_screen.dart';
 import 'package:fitflow/screens/profile_screen.dart';
 import 'package:fitflow/screens/progress_screen.dart';
-import 'package:fitflow/widgets/glass_card.dart';
-import 'package:fitflow/widgets/background_container.dart'; // Correct import
 import 'package:flutter/material.dart';
 
 class NavScreen extends StatefulWidget {
   const NavScreen({super.key});
 
-  @super.key
+  @override
   State<NavScreen> createState() => _NavScreenState();
 }
 
 class _NavScreenState extends State<NavScreen> {
   int _selectedIndex = 0;
-  late final List<Widget> _screens;
-
-  @override
-  void initState() {
-    super.initState();
-    _screens = [
-      HomeScreen(onNavigateToProgress: () => _onItemTapped(1)),
-      const ProgressScreen(),
-      const PlanScreen(),
-      const ProfileScreen(),
-    ];
-  }
+  
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const ProgressScreen(),
+    const PlanScreen(),
+    const ProfileScreen(),
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -36,23 +29,27 @@ class _NavScreenState extends State<NavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackgroundContainer( // Using the correct widget
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        extendBody: true,
-        body: _screens[_selectedIndex],
-        bottomNavigationBar: _buildModernNavBar(),
-      ),
-    );
-  }
-
-  Widget _buildModernNavBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-      child: GlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: SizedBox(
-          height: 65,
+    return Scaffold(
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
           child: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
@@ -64,11 +61,11 @@ class _NavScreenState extends State<NavScreen> {
             onTap: _onItemTapped,
             backgroundColor: Colors.transparent,
             elevation: 0,
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white70,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
+            type: Theme.of(context).bottomNavigationBarTheme.type,
+            selectedItemColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+            unselectedItemColor: Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
+            showSelectedLabels: Theme.of(context).bottomNavigationBarTheme.showSelectedLabels,
+            showUnselectedLabels: Theme.of(context).bottomNavigationBarTheme.showUnselectedLabels,
           ),
         ),
       ),
