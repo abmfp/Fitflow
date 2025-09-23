@@ -36,23 +36,41 @@ class _NavScreenState extends State<NavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientContainer(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        extendBody: true,
-        body: _screens[_selectedIndex],
-        bottomNavigationBar: _buildModernNavBar(),
+    return Scaffold(
+      backgroundColor: Colors.transparent, // Ensure scaffold is transparent
+      extendBody: true, // This allows body to extend behind nav bar
+      body: GradientContainer( // Wrap entire body with GradientContainer
+        child: _screens[_selectedIndex],
       ),
+      bottomNavigationBar: _buildModernNavBar(),
     );
   }
 
   Widget _buildModernNavBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-      child: GlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: SizedBox(
-          height: 65,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25), // Rounded corners for the glass card
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+        gradient: LinearGradient( // Apply gradient directly to the nav bar container
+          colors: [
+            Colors.white.withOpacity(0.15), // Semi-transparent white for glass effect
+            Colors.white.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: ClipRRect( // Clip to apply rounded corners correctly with blur
+        borderRadius: BorderRadius.circular(25),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Apply blur for glass effect
           child: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
@@ -62,7 +80,7 @@ class _NavScreenState extends State<NavScreen> {
             ],
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.transparent, // Transparent to show blurred gradient
             elevation: 0,
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.white,
