@@ -3,6 +3,7 @@ import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:fitflow/widgets/ app_scaffold.dart';
 
 class WeightHistoryScreen extends StatefulWidget {
   const WeightHistoryScreen({super.key});
@@ -57,7 +58,7 @@ class _WeightHistoryScreenState extends State<WeightHistoryScreen> {
     final history = _weightService.weightHistory;
     final chartData = _weightService.weightChartData;
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: const Text('Weight History'),
         backgroundColor: Colors.transparent,
