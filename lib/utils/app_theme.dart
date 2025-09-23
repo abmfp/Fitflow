@@ -1,9 +1,9 @@
-import 'package.flutter/material.dart';
-import 'package.google_fonts/google_fonts.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: Colors.transparent, // Required for custom background
+    scaffoldBackgroundColor: Colors.transparent,
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -32,10 +32,18 @@ class AppTheme {
       showSelectedLabels: false,
       showUnselectedLabels: false,
     ),
-    // ... other theme properties
+    chipTheme: ChipThemeData(
+      backgroundColor: Colors.white.withOpacity(0.1),
+      disabledColor: Colors.grey,
+      selectedColor: Colors.white,
+      secondarySelectedColor: Colors.white,
+      padding: const EdgeInsets.all(8.0),
+      labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
+      secondaryLabelStyle: const TextStyle(color: Color(0xFF1F1D2B)),
+      brightness: Brightness.dark,
+    )
   );
 
-  // This will be the default background if no image is selected
   static const BoxDecoration defaultGradientBackground = BoxDecoration(
     gradient: LinearGradient(
       colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
