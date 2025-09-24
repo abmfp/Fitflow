@@ -3,7 +3,7 @@ import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:fitflow/widgets/ app_scaffold.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 
 class WorkoutDetailScreen extends StatefulWidget {
   final Exercise exercise;
