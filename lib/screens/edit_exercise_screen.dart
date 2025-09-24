@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/app_scaffold.dart';
-import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -115,53 +114,51 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
             ),
         ],
       ),
-      body: BackgroundContainer(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildTextField(controller: _nameController, label: 'Exercise Name'),
-              const SizedBox(height: 15),
-              _buildTextField(controller: _descriptionController, label: 'Description (Optional)', maxLines: 3),
-              const SizedBox(height: 15),
-              _buildDropdown(),
-              const SizedBox(height: 15),
-              Row(
-                children: [
-                  Expanded(child: _buildTextField(label: 'Sets', keyboardType: TextInputType.number)),
-                  const SizedBox(width: 15),
-                  Expanded(child: _buildTextField(label: 'Reps', keyboardType: TextInputType.number)),
-                ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildTextField(controller: _nameController, label: 'Exercise Name'),
+            const SizedBox(height: 15),
+            _buildTextField(controller: _descriptionController, label: 'Description (Optional)', maxLines: 3),
+            const SizedBox(height: 15),
+            _buildDropdown(),
+            const SizedBox(height: 15),
+            Row(
+              children: [
+                Expanded(child: _buildTextField(label: 'Sets', keyboardType: TextInputType.number)),
+                const SizedBox(width: 15),
+                Expanded(child: _buildTextField(label: 'Reps', keyboardType: TextInputType.number)),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                Expanded(child: _buildMediaButton(
+                  icon: Icons.image_outlined, 
+                  label: _imagePath == null ? 'Add Image' : 'Change Image',
+                  onPressed: () => _pickMedia(false),
+                )),
+                const SizedBox(width: 15),
+                Expanded(child: _buildMediaButton(
+                  icon: Icons.videocam_outlined,
+                  label: _videoPath == null ? 'Add Video' : 'Change Video',
+                  onPressed: () => _pickMedia(true),
+                )),
+              ],
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: _saveExercise,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF1F1D2B),
               ),
-              const SizedBox(height: 30),
-              Row(
-                children: [
-                  Expanded(child: _buildMediaButton(
-                    icon: Icons.image_outlined, 
-                    label: _imagePath == null ? 'Add Image' : 'Change Image',
-                    onPressed: () => _pickMedia(false),
-                  )),
-                  const SizedBox(width: 15),
-                  Expanded(child: _buildMediaButton(
-                    icon: Icons.videocam_outlined,
-                    label: _videoPath == null ? 'Add Video' : 'Change Video',
-                    onPressed: () => _pickMedia(true),
-                  )),
-                ],
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _saveExercise,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF1F1D2B),
-                ),
-                child: const Text('Save Exercise', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
+              child: const Text('Save Exercise', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+          ],
         ),
       ),
     );
