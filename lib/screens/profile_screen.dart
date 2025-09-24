@@ -4,7 +4,7 @@ import 'package:fitflow/screens/settings_screen.dart';
 import 'package:fitflow/screens/workout_history_screen.dart';
 import 'package:fitflow/services/user_service.dart';
 import 'package:fitflow/widgets/glass_card.dart';
-import 'package:fitflow/widgets/ app_scaffold.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
