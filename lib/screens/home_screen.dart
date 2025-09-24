@@ -8,6 +8,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:fitflow/screens/workout_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fitflow/widgets/glass_card.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToProgress;
