@@ -5,7 +5,7 @@ import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fitflow/widgets/ app_scaffold.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
