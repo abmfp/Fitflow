@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:fitflow/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:fitflow/widgets/ app_scaffold.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
