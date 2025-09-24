@@ -1,6 +1,6 @@
 import 'package:fitflow/services/workout_service.dart';
 import 'package:flutter/material.dart';
-import 'package:fitflow/widgets/ app_scaffold.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 
 class PlanDetailScreen extends StatelessWidget {
   final String day;
