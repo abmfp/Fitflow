@@ -4,7 +4,7 @@ import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/services/weight_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:fitflow/widgets/ app_scaffold.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:fitflow/screens/workout_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
