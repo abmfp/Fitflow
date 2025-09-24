@@ -1,4 +1,4 @@
-import 'package:fitflow/widgets/gradient_container.dart';
+import 'package:fitflow/widgets/background_container.dart';
 import 'package:flutter/material.dart';
 
 class AppScaffold extends StatelessWidget {
@@ -17,7 +17,7 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientContainer(
+    return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: appBar,
