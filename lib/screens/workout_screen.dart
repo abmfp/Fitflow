@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'package:fitflow/screens/workout_detail_screen.dart';
-import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/app_scaffold.dart';
-import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package.fitflow/screens/workout_detail_screen.dart';
+import 'package.fitflow/services/workout_service.dart';
+import 'package.fitflow/widgets/app_scaffold.dart';
+import 'package.fitflow/widgets/glass_card.dart';
+import 'package.flutter/material.dart';
+import 'package.page_transition/page_transition.dart';
+import 'package.flutter_animate/flutter_animate.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -68,30 +69,48 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Colors.white.withOpacity(0.2)),
-        ),
-        backgroundColor: const Color(0xFF252836).withOpacity(0.85),
-        title: const Text('Workout Complete!', textAlign: TextAlign.center),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.check_circle_outline_rounded, color: Colors.green, size: 60),
-            const SizedBox(height: 20),
-            Text('Great job! You finished $completedCount exercises in ${_formatDuration(_duration)}.'),
-          ],
-        ).animate().fadeIn(duration: 400.ms),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          TextButton(
-            child: const Text('OK', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pop();
-            },
+        backgroundColor: Colors.transparent,
+        contentPadding: EdgeInsets.zero,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+        content: GlassCard(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Workout Complete!',
+                  style: Theme.of(context).textTheme.displayMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                const Icon(Icons.check_circle_outline_rounded, color: Colors.green, size: 60)
+                    .animate().scale(duration: 300.ms, curve: Curves.easeOutBack),
+                const SizedBox(height: 20),
+                Text(
+                  'Great job! You finished $completedCount exercises in ${_formatDuration(_duration)}.',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  child: const Text('OK', style: TextStyle(color: Color(0xFF1F1D2B), fontWeight: FontWeight.bold, fontSize: 16)),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF1F1D2B),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -113,17 +132,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         title: Text(title),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Center(
-              child: Text(
-                _formatDuration(_duration),
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-            ),
-          ),
-        ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(20.0),
