@@ -8,6 +8,7 @@ import 'package.page_transition/page_transition.dart';
 import 'package:fitflow/screens/workout_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package.fitflow/widgets/glass_card.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToProgress;
@@ -109,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final int streak = _workoutService.weeklyWorkoutCount;
     final String motivationalMessage = _getMotivationalMessage(streak);
 
-    return Scaffold(
+    return AppScaffold(
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 20.0),
