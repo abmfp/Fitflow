@@ -1,14 +1,13 @@
 import 'package:fitflow/screens/weight_history_screen.dart';
-import 'package:fitflow/services/user_service.dart';
-import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/services/weight_service.dart';
-import 'package:fitflow/widgets/app_scaffold.dart';
-import 'package:fitflow/widgets/glass_card.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package.fitflow/services/user_service.dart';
+import 'package.fitflow/services/workout_service.dart';
+import 'package.fitflow/services/weight_service.dart';
+import 'package.flutter/material.dart';
+import 'package.intl/intl.dart';
+import 'package.page_transition/page_transition.dart';
 import 'package:fitflow/screens/workout_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package.fitflow/widgets/glass_card.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToProgress;
@@ -52,10 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Colors.white.withOpacity(0.2)),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.white.withOpacity(0.2))),
         backgroundColor: const Color(0xFF252836).withOpacity(0.85),
         title: Text('Log Weight for ${DateFormat('d MMM').format(date)}'),
         content: TextField(
@@ -78,10 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          TextButton(
-            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
-            onPressed: () => Navigator.of(ctx).pop(),
-          ),
+          TextButton(child: const Text('Cancel', style: TextStyle(color: Colors.white70)), onPressed: () => Navigator.of(ctx).pop()),
           TextButton(
             child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             onPressed: () {
@@ -116,10 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final int streak = _workoutService.weeklyWorkoutCount;
     final String motivationalMessage = _getMotivationalMessage(streak);
 
-    return AppScaffold(
+    return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(0, 10, 0, 120),
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
           children: [
             _buildDateSelector(_selectedDate),
             const SizedBox(height: 30),
