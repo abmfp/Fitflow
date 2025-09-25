@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart.io';
 import 'package:fitflow/services/workout_service.dart';
 import 'package:fitflow/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -182,32 +182,35 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
   }
   
   Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedMuscle,
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          setState(() {
-            _selectedMuscle = newValue;
-          });
-        }
-      },
-      dropdownColor: const Color(0xFF252836),
-      icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
-      decoration: InputDecoration(
-        labelText: 'Target Muscle',
-        filled: true,
-        fillColor: Theme.of(context).cardTheme.color,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedMuscle,
+          isExpanded: true,
+          hint: const Text('Select Target Muscle'),
+          style: Theme.of(context).textTheme.bodyLarge,
+          dropdownColor: const Color(0xFF252836),
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedMuscle = newValue;
+              });
+            }
+          },
+          items: _muscleGroups.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
         ),
       ),
-      items: _muscleGroups.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
     );
   }
 
