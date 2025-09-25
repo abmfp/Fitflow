@@ -1,9 +1,9 @@
 import 'package:fitflow/screens/plan_detail_screen.dart';
-import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/app_scaffold.dart';
-import 'package:fitflow/widgets/glass_card.dart';
-import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package.fitflow/services/workout_service.dart';
+import 'package.fitflow/widgets/app_scaffold.dart';
+import 'package.fitflow/widgets/glass_card.dart';
+import 'package.flutter/material.dart';
+import 'package.page_transition/page_transition.dart';
 
 class PlanScreen extends StatefulWidget {
   const PlanScreen({super.key});
