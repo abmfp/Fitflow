@@ -6,7 +6,6 @@ import 'package:fitflow/widgets/glass_card.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fitflow/widgets/app_scaffold.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ProgressScreen extends StatefulWidget {
@@ -42,11 +41,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
+    return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -57,6 +56,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 const SizedBox(height: 10),
                 _buildSectionTitle(context, "Today's Stats"),
                 _buildTodayStatsCard(context),
+                const SizedBox(height: 10),
+                _buildSectionTitle(context, "Monthly Stats"),
+                _buildMonthlyStatsCard(context),
                 const SizedBox(height: 10),
                 _buildSectionTitle(context, 'Workout Streak'),
                 _buildWorkoutStreakCalendar(context),
@@ -73,6 +75,21 @@ class _ProgressScreenState extends State<ProgressScreen> {
         padding: const EdgeInsets.only(left: 24.0, bottom: 5),
         child: Text(title, style: Theme.of(context).textTheme.displayMedium),
       );
+
+  Widget _buildMonthlyStatsCard(BuildContext context) {
+    return GlassCard(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildStatItem(
+            context,
+            '${_workoutService.workoutsThisMonth}',
+            'Workouts this Month',
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildWeightAnalyticsCard(BuildContext context) {
     final List<FlSpot> weightData = _weightService.weightChartData;
