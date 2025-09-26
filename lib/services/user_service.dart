@@ -9,37 +9,36 @@ class UserService extends ChangeNotifier {
   late Box _box;
   String _username = 'User';
   String? _profilePicturePath;
-  String? _backgroundImagePath; // New field for the background
+  String? _backgroundImagePath;
 
   String get username => _username;
   String? get profilePicturePath => _profilePicturePath;
-  String? get backgroundImagePath => _backgroundImagePath; // New getter
+  String? get backgroundImagePath => _backgroundImagePath;
 
   Future<void> init() async {
     _box = Hive.box('user_data');
     _username = _box.get('username', defaultValue: 'User');
     _profilePicturePath = _box.get('profilePicturePath');
-    _backgroundImagePath = _box.get('backgroundImagePath'); // Load from database
+    _backgroundImagePath = _box.get('backgroundImagePath');
   }
 
-  void updateUsername(String newName) {
+  Future<void> updateUsername(String newName) async {
     if (newName.isNotEmpty) {
       _username = newName;
-      _box.put('username', newName);
+      await _box.put('username', newName);
       notifyListeners();
     }
   }
 
-  void updateProfilePicture(String path) {
+  Future<void> updateProfilePicture(String path) async {
     _profilePicturePath = path;
-    _box.put('profilePicturePath', path);
+    await _box.put('profilePicturePath', path);
     notifyListeners();
   }
 
-  // New method to update the background image
-  void updateBackgroundImage(String path) {
+  Future<void> updateBackgroundImage(String path) async {
     _backgroundImagePath = path;
-    _box.put('backgroundImagePath', path);
+    await _box.put('backgroundImagePath', path);
     notifyListeners();
   }
 }
