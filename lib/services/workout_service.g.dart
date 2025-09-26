@@ -67,13 +67,15 @@ class CustomExerciseAdapter extends TypeAdapter<CustomExercise> {
       muscleGroup: fields[1] as String,
       imagePath: fields[2] as String?,
       videoPath: fields[3] as String?,
+      description: fields[4] as String?,
+      subtype: fields[5] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, CustomExercise obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -81,7 +83,11 @@ class CustomExerciseAdapter extends TypeAdapter<CustomExercise> {
       ..writeByte(2)
       ..write(obj.imagePath)
       ..writeByte(3)
-      ..write(obj.videoPath);
+      ..write(obj.videoPath)
+      ..writeByte(4)
+      ..write(obj.description)
+      ..writeByte(5)
+      ..write(obj.subtype);
   }
 
   @override
