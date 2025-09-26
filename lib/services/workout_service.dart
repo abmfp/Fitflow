@@ -88,6 +88,13 @@ class WorkoutService extends ChangeNotifier {
     final today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return _workoutHistory[today] ?? [];
   }
+  
+  int get workoutsThisMonth {
+    final now = DateTime.now();
+    return _workoutHistory.keys
+        .where((date) => date.year == now.year && date.month == now.month)
+        .length;
+  }
 
   int get completedExercisesCount => _currentWorkoutExercises.where((e) => e.isCompleted).length;
   int get totalExercisesCount => _currentWorkoutExercises.length;
@@ -235,6 +242,16 @@ class WorkoutService extends ChangeNotifier {
       exercise.delete();
     }
     _customExercises.removeWhere((ex) => ex.name == exercise.name && ex.muscleGroup == exercise.muscleGroup && ex.subtype == exercise.subtype);
+    notifyListeners();
+  }
+
+  Future<void> deleteWorkoutHistory(DateTime date) async {
+    final dateKey = DateTime.utc(date.year, date.month, date.day);
+    final stringKey = dateKey.toIso8601String();
+
+    _workoutHistory.remove(dateKey);
+    await _historyBox.delete(stringKey);
+    
     notifyListeners();
   }
 }
