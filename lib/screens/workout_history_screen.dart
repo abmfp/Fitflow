@@ -1,11 +1,11 @@
 import 'dart:ui';
 import 'package:fitflow/screens/workout_detail_screen.dart';
 import 'package:fitflow/services/workout_service.dart';
-import 'package:fitflow/widgets/background_container.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:fitflow/widgets/app_scaffold.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
   const WorkoutHistoryScreen({super.key});
@@ -45,8 +45,28 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
 
   String _getMuscleGroupsForWorkout(List<Exercise> exercises) {
     if (exercises.isEmpty) return "No Workout";
-    final muscles = exercises.map((e) => _workoutService.customExercises.firstWhere((ce) => ce.name == e.name, orElse: () => CustomExercise(name: '', muscleGroup: 'Unknown')).muscleGroup).toSet();
+    final muscles = exercises.map((e) => _workoutService.customExercises.firstWhere((ce) => ce.name == e.name, orElse: () => CustomExercise(name: '', muscleGroup: 'Unknown', subtype: 'Subtype 1')).muscleGroup).toSet();
     return muscles.join(' & ');
+  }
+
+  void _confirmDeleteHistory(DateTime date) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Workout?'),
+        content: Text('Are you sure you want to delete the workout for ${DateFormat('d MMMM').format(date)}?'),
+        actions: [
+          TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(ctx).pop()),
+          TextButton(
+            child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            onPressed: () {
+              _workoutService.deleteWorkoutHistory(date);
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -60,104 +80,101 @@ class _WorkoutHistoryScreenState extends State<WorkoutHistoryScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: BackgroundContainer(
-        child: Column(
-          children: [
-            _buildGlassmorphismContainer(
-              context: context,
-              child: TableCalendar(
-                firstDay: DateTime.utc(2020, 1, 1),
-                lastDay: DateTime.utc(2030, 12, 31),
-                focusedDay: _focusedDay,
-                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                onDaySelected: (selectedDay, focusedDay) {
-                  setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
-                    _isExpanded = _getWorkoutsForDay(selectedDay).isNotEmpty;
-                  });
-                },
-                calendarStyle: CalendarStyle(
-                  outsideDaysVisible: false,
-                  todayDecoration: BoxDecoration(color: Colors.white.withOpacity(0.3), shape: BoxShape.circle),
-                  selectedDecoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  selectedTextStyle: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
-                ),
-                headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
-                calendarBuilders: CalendarBuilders(
-                  defaultBuilder: (context, day, focusedDay) {
-                    if (_getWorkoutsForDay(day).isNotEmpty) {
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Text('${day.day}', style: const TextStyle(color: Colors.white)),
-                          const Positioned(
-                            bottom: 2,
-                            child: Icon(Icons.check_circle, color: Colors.green, size: 12),
-                          ),
-                        ],
-                      );
-                    }
-                    return Center(child: Text('${day.day}', style: const TextStyle(color: Colors.white)));
-                  },
-                ),
+      body: Column(
+        children: [
+          _buildGlassmorphismContainer(
+            context: context,
+            child: TableCalendar(
+              firstDay: DateTime.utc(2020, 1, 1),
+              lastDay: DateTime.utc(2030, 12, 31),
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                  _isExpanded = _getWorkoutsForDay(selectedDay).isNotEmpty;
+                });
+              },
+              calendarStyle: CalendarStyle(
+                outsideDaysVisible: false,
+                todayDecoration: BoxDecoration(color: Colors.white.withOpacity(0.3), shape: BoxShape.circle),
+                selectedDecoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                selectedTextStyle: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
               ),
-            ),
-            
-            Expanded(
-              child: workoutsForSelectedDay.isEmpty
-                  ? const Center(child: Text("No workout logged for this day."))
-                  : ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+              headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
+              calendarBuilders: CalendarBuilders(
+                defaultBuilder: (context, day, focusedDay) {
+                  if (_getWorkoutsForDay(day).isNotEmpty) {
+                    return Stack(
+                      alignment: Alignment.center,
                       children: [
-                        _buildGlassmorphismContainer(
-                          context: context,
-                          padding: EdgeInsets.zero,
-                          child: ExpansionPanelList(
-                            elevation: 0,
-                            expandedHeaderPadding: EdgeInsets.zero,
-                            dividerColor: Colors.transparent,
-                            expansionCallback: (int index, bool isExpanded) {
-                              setState(() {
-                                _isExpanded = !_isExpanded;
-                              });
-                            },
-                            children: [
-                              ExpansionPanel(
-                                backgroundColor: Colors.transparent,
-                                isExpanded: _isExpanded,
-                                headerBuilder: (BuildContext context, bool isExpanded) {
-                                  return ListTile(
-                                    title: Text(workoutTitle, style: Theme.of(context).textTheme.labelLarge),
-                                  );
-                                },
-                                body: Column(
-                                  children: workoutsForSelectedDay.map((exercise) {
-                                    return ListTile(
-                                      title: Text(exercise.name),
-                                      dense: true,
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)),
-                                        );
-                                      },
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ],
-                          ),
+                        Text('${day.day}', style: const TextStyle(color: Colors.white)),
+                        const Positioned(
+                          bottom: 2,
+                          child: Icon(Icons.check_circle, color: Colors.green, size: 12),
                         ),
                       ],
-                    ),
+                    );
+                  }
+                  return Center(child: Text('${day.day}', style: const TextStyle(color: Colors.white)));
+                },
+              ),
             ),
-          ],
-        ),
+          ),
+          
+          Expanded(
+            child: workoutsForSelectedDay.isEmpty
+                ? const Center(child: Text("No workout logged for this day."))
+                : ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    children: [
+                      _buildGlassmorphismContainer(
+                        context: context,
+                        padding: EdgeInsets.zero,
+                        child: ExpansionPanelList(
+                          elevation: 0,
+                          expandedHeaderPadding: EdgeInsets.zero,
+                          dividerColor: Colors.transparent,
+                          expansionCallback: (int index, bool isExpanded) {
+                            setState(() { _isExpanded = !_isExpanded; });
+                          },
+                          children: [
+                            ExpansionPanel(
+                              backgroundColor: Colors.transparent,
+                              isExpanded: _isExpanded,
+                              headerBuilder: (BuildContext context, bool isExpanded) {
+                                return ListTile(
+                                  title: Text(workoutTitle, style: Theme.of(context).textTheme.labelLarge),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error.withOpacity(0.8)),
+                                    onPressed: () => _confirmDeleteHistory(_selectedDay!),
+                                  ),
+                                );
+                              },
+                              body: Column(
+                                children: workoutsForSelectedDay.map((exercise) {
+                                  return ListTile(
+                                    title: Text(exercise.name),
+                                    dense: true,
+                                    onTap: () {
+                                      Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: WorkoutDetailScreen(exercise: exercise)));
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                             ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+            ),
+        ],
       ),
     );
   }
-
+  
   Widget _buildGlassmorphismContainer({
     required BuildContext context,
     required Widget child,
