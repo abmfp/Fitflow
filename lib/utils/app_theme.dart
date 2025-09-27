@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: Colors.transparent,
+    scaffoldBackgroundColor: const Color(0xFF1F1D2B), // Solid background color
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
@@ -17,29 +17,29 @@ class AppTheme {
       labelLarge: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
     ),
     cardTheme: CardThemeData(
-      color: Colors.white.withOpacity(0.1),
+      color: const Color(0xFF3A384B).withOpacity(0.5),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.white.withOpacity(0.2)),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Color(0xFF252836),
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white70,
       type: BottomNavigationBarType.fixed,
       showSelectedLabels: false,
       showUnselectedLabels: false,
     ),
-    // ... other theme properties
-  );
-
-  static const BoxDecoration defaultGradientBackground = BoxDecoration(
-    gradient: LinearGradient(
-      colors: [Color(0xFF2C2B3F), Color(0xFF1F1D2B)],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: Colors.white.withOpacity(0.1),
+      disabledColor: Colors.grey,
+      selectedColor: Colors.white,
+      secondarySelectedColor: Colors.white,
+      padding: const EdgeInsets.all(8.0),
+      labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
+      secondaryLabelStyle: const TextStyle(color: Color(0xFF1F1D2B)),
+      brightness: Brightness.dark,
+    )
   );
 }
