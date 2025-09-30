@@ -1,11 +1,11 @@
-import 'dart.ui';
-import 'package.fitflow/screens/workout_detail_screen.dart';
-import 'package.fitflow/services/workout_service.dart';
-import 'package.fitflow/widgets/app_scaffold.dart';
-import 'package.flutter/material.dart';
-import 'package.intl/intl.dart';
-import 'package.page_transition/page_transition.dart';
-import 'package.table_calendar/table_calendar.dart';
+import 'dart:ui';
+import 'package:fitflow/screens/workout_detail_screen.dart';
+import 'package:fitflow/services/workout_service.dart';
+import 'package:fitflow/widgets/app_scaffold.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class WorkoutHistoryScreen extends StatefulWidget {
   const WorkoutHistoryScreen({super.key});
