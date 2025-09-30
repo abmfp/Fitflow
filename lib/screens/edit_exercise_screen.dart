@@ -17,6 +17,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late String _selectedMuscle;
+  late String _selectedSubtype;
   final List<String> _muscleGroups = ['Back', 'Chest', 'Legs', 'Shoulders', 'Biceps', 'Triceps', 'Abs'];
 
   String? _imagePath;
@@ -30,6 +31,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     _nameController = TextEditingController(text: widget.initialExercise?.name ?? '');
     _descriptionController = TextEditingController(text: widget.initialExercise?.description ?? '');
     _selectedMuscle = widget.initialExercise?.muscleGroup ?? _muscleGroups.first;
+    _selectedSubtype = widget.initialExercise?.subtype ?? 'Subtype 1';
     _imagePath = widget.initialExercise?.imagePath;
     _videoPath = widget.initialExercise?.videoPath;
   }
@@ -64,6 +66,7 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
     final newExerciseData = CustomExercise(
       name: _nameController.text,
       muscleGroup: _selectedMuscle,
+      subtype: _selectedSubtype,
       description: _descriptionController.text,
       imagePath: _imagePath,
       videoPath: _videoPath,
@@ -125,6 +128,8 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
             const SizedBox(height: 15),
             _buildDropdown(),
             const SizedBox(height: 15),
+            _buildSubtypeSelector(),
+            const SizedBox(height: 15),
             Row(
               children: [
                 Expanded(child: _buildTextField(label: 'Sets', keyboardType: TextInputType.number)),
@@ -182,32 +187,75 @@ class _EditExerciseScreenState extends State<EditExerciseScreen> {
   }
   
   Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedMuscle,
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          setState(() {
-            _selectedMuscle = newValue;
-          });
-        }
-      },
-      dropdownColor: const Color(0xFF252836),
-      icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
-      decoration: InputDecoration(
-        labelText: 'Target Muscle',
-        filled: true,
-        fillColor: Theme.of(context).cardTheme.color,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedMuscle,
+          isExpanded: true,
+          hint: const Text('Select Target Muscle'),
+          style: Theme.of(context).textTheme.bodyLarge,
+          dropdownColor: const Color(0xFF252836),
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedMuscle = newValue;
+              });
+            }
+          },
+          items: _muscleGroups.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
         ),
       ),
-      items: _muscleGroups.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+    );
+  }
+  
+  Widget _buildSubtypeSelector() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedSubtype = 'Subtype 1'),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: _selectedSubtype == 'Subtype 1' ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(child: Text('Subtype 1', style: TextStyle(color: _selectedSubtype == 'Subtype 1' ? Color(0xFF1F1D2B) : Colors.white, fontWeight: FontWeight.bold))),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedSubtype = 'Subtype 2'),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: _selectedSubtype == 'Subtype 2' ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(child: Text('Subtype 2', style: TextStyle(color: _selectedSubtype == 'Subtype 2' ? Color(0xFF1F1D2B) : Colors.white, fontWeight: FontWeight.bold))),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
