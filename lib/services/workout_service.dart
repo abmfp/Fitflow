@@ -30,22 +30,25 @@ class Exercise extends HiveObject {
 @HiveType(typeId: 2)
 class CustomExercise extends HiveObject {
   @HiveField(0)
-  final String name;
+  String name;
   @HiveField(1)
-  final String muscleGroup;
+  String muscleGroup;
   @HiveField(2)
   String? imagePath;
   @HiveField(3)
   String? videoPath;
   @HiveField(4)
   String? description;
+  @HiveField(5)
+  String subtype;
   
   CustomExercise({
     required this.name, 
     required this.muscleGroup, 
     this.imagePath, 
     this.videoPath, 
-    this.description
+    this.description,
+    required this.subtype,
   });
 }
 
@@ -57,17 +60,8 @@ class WorkoutService extends ChangeNotifier {
   late Box _dataBox;
   late Box<List> _historyBox;
   late Box<CustomExercise> _customExercisesBox;
-
-  final List<Map<String, dynamic>> _weeklyPlan = [
-    {'day': 'Monday', 'muscles': ['Chest', 'Biceps']},
-    {'day': 'Tuesday', 'muscles': ['Back', 'Triceps']},
-    {'day': 'Wednesday', 'muscles': ['Legs', 'Shoulders']},
-    {'day': 'Thursday', 'muscles': []},
-    {'day': 'Friday', 'muscles': ['Chest', 'Back']},
-    {'day': 'Saturday', 'muscles': ['Abs']},
-    {'day': 'Sunday', 'muscles': []},
-  ];
   
+  List<Map<String, dynamic>> _weeklyPlan = [];
   Map<DateTime, List<Exercise>> _workoutHistory = {};
   List<Exercise> _currentWorkoutExercises = [];
   List<CustomExercise> _customExercises = [];
@@ -85,6 +79,13 @@ class WorkoutService extends ChangeNotifier {
     final today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return _workoutHistory[today] ?? [];
   }
+  
+  int get workoutsThisMonth {
+    final now = DateTime.now();
+    return _workoutHistory.keys
+        .where((date) => date.year == now.year && date.month == now.month)
+        .length;
+  }
 
   int get completedExercisesCount => _currentWorkoutExercises.where((e) => e.isCompleted).length;
   int get totalExercisesCount => _currentWorkoutExercises.length;
@@ -98,16 +99,24 @@ class WorkoutService extends ChangeNotifier {
     _weeklyWorkoutCount = _dataBox.get('weeklyWorkoutCount', defaultValue: 0);
     _lastWorkoutWeek = _dataBox.get('lastWorkoutWeek', defaultValue: 0);
     
+    var savedPlan = _dataBox.get('weeklyPlan');
+    if (savedPlan == null) {
+      _weeklyPlan = _getDefaultPlan();
+      await _dataBox.put('weeklyPlan', _weeklyPlan);
+    } else {
+      _weeklyPlan = List<Map<String, dynamic>>.from(savedPlan.map((item) => Map<String, dynamic>.from(item)));
+    }
+    
     int currentWeek = DateTime.now().weekOfYear;
     if (currentWeek != _lastWorkoutWeek) {
       _weeklyWorkoutCount = 0;
-      _dataBox.put('weeklyWorkoutCount', 0);
+      await _dataBox.put('weeklyWorkoutCount', 0);
     }
 
     _customExercises = _customExercisesBox.values.toList();
     
     if (_customExercises.isEmpty) {
-      _addDefaultExercises();
+      await _addDefaultExercises();
     }
 
     _workoutHistory = {};
@@ -122,18 +131,28 @@ class WorkoutService extends ChangeNotifier {
     }
   }
 
-  void _addDefaultExercises() {
-    final defaultExercises = [
-        CustomExercise(name: 'Deadlifts', muscleGroup: 'Back', description: 'A powerful full-body exercise.'),
-        CustomExercise(name: 'Barbell Incline Bench Press', muscleGroup: 'Chest', description: 'Targets the upper chest.'),
-        CustomExercise(name: 'Squats', muscleGroup: 'Legs', description: 'The ultimate lower body workout.'),
-        CustomExercise(name: 'Barbell Push Press', muscleGroup: 'Shoulders', description: 'Builds explosive shoulder strength.'),
-        CustomExercise(name: 'Lat Pulldowns', muscleGroup: 'Back', description: 'Great for building a wide back.'),
-        CustomExercise(name: 'Dumbbell Curls', muscleGroup: 'Biceps', description: 'Classic exercise for bicep peaks.'),
+  List<Map<String, dynamic>> _getDefaultPlan() {
+    return [
+      {'day': 'Monday', 'muscles': ['Chest', 'Biceps']},
+      {'day': 'Tuesday', 'muscles': ['Back', 'Triceps']},
+      {'day': 'Wednesday', 'muscles': ['Legs', 'Shoulders']},
+      {'day': 'Thursday', 'muscles': []},
+      {'day': 'Friday', 'muscles': ['Chest', 'Back']},
+      {'day': 'Saturday', 'muscles': ['Abs']},
+      {'day': 'Sunday', 'muscles': []},
     ];
-    for (var ex in defaultExercises) {
-      _customExercisesBox.add(ex);
-    }
+  }
+
+  Future<void> _addDefaultExercises() async {
+    final defaultExercises = [
+        CustomExercise(name: 'Deadlifts', muscleGroup: 'Back', subtype: 'Subtype 1', description: 'A powerful full-body exercise.'),
+        CustomExercise(name: 'Lat Pulldowns', muscleGroup: 'Back', subtype: 'Subtype 2', description: 'Great for building a wide back.'),
+        CustomExercise(name: 'Barbell Bench Press', muscleGroup: 'Chest', subtype: 'Subtype 1', description: 'Targets the middle chest.'),
+        CustomExercise(name: 'Dumbbell Flyes', muscleGroup: 'Chest', subtype: 'Subtype 2', description: 'Focuses on chest isolation.'),
+        CustomExercise(name: 'Squats', muscleGroup: 'Legs', subtype: 'Subtype 1', description: 'The ultimate lower body workout.'),
+        CustomExercise(name: 'Leg Curls', muscleGroup: 'Legs', subtype: 'Subtype 2', description: 'Isolates the hamstrings.'),
+    ];
+    await _customExercisesBox.addAll(defaultExercises);
     _customExercises = defaultExercises;
   }
   
@@ -157,7 +176,7 @@ class WorkoutService extends ChangeNotifier {
     notifyListeners();
   }
   
-  int finishCurrentWorkout() {
+  Future<void> finishCurrentWorkout() async {
     final completedExercises = _currentWorkoutExercises.where((e) => e.isCompleted).toList();
     
     if (completedExercises.isEmpty && _currentWorkoutExercises.isNotEmpty) {
@@ -168,7 +187,7 @@ class WorkoutService extends ChangeNotifier {
     if (completedExercises.isNotEmpty) {
       final dateToLog = DateTime.utc(_activeWorkoutDate.year, _activeWorkoutDate.month, _activeWorkoutDate.day);
       _workoutHistory[dateToLog] = completedExercises;
-      _historyBox.put(dateToLog.toIso8601String(), completedExercises);
+      await _historyBox.put(dateToLog.toIso8601String(), completedExercises);
     }
     
     int currentWeek = DateTime.now().weekOfYear;
@@ -181,12 +200,11 @@ class WorkoutService extends ChangeNotifier {
     }
     
     _lastWorkoutWeek = currentWeek;
-    _dataBox.put('weeklyWorkoutCount', _weeklyWorkoutCount);
-    _dataBox.put('lastWorkoutWeek', _lastWorkoutWeek);
+    await _dataBox.put('weeklyWorkoutCount', _weeklyWorkoutCount);
+    await _dataBox.put('lastWorkoutWeek', _lastWorkoutWeek);
     
     _currentWorkoutExercises = [];
     notifyListeners();
-    return completedExercises.length;
   }
 
   List<String> getMusclesForDay(DateTime date) {
@@ -203,10 +221,11 @@ class WorkoutService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updatePlanForDay(String day, List<String> muscles) {
+  Future<void> updatePlanForDay(String day, List<String> muscles) async {
     int dayIndex = _weeklyPlan.indexWhere((plan) => plan['day'] == day);
     if (dayIndex != -1) {
       _weeklyPlan[dayIndex]['muscles'] = muscles;
+      await _dataBox.put('weeklyPlan', _weeklyPlan);
       notifyListeners();
     }
   }
@@ -215,23 +234,36 @@ class WorkoutService extends ChangeNotifier {
     return _customExercises.where((ex) => muscles.contains(ex.muscleGroup)).toList();
   }
 
-  void addCustomExercise(CustomExercise exercise) {
+  Future<void> addCustomExercise(CustomExercise exercise) async {
+    await _customExercisesBox.add(exercise);
     _customExercises.add(exercise);
-    _customExercisesBox.add(exercise);
     notifyListeners();
   }
 
-  void updateCustomExercise(CustomExercise oldExercise, CustomExercise newExerciseData) {
+  Future<void> updateCustomExercise(CustomExercise oldExercise, CustomExercise newExerciseData) async {
+    oldExercise.name = newExerciseData.name;
+    oldExercise.muscleGroup = newExerciseData.muscleGroup;
+    oldExercise.subtype = newExerciseData.subtype;
+    oldExercise.description = newExerciseData.description;
     oldExercise.imagePath = newExerciseData.imagePath;
     oldExercise.videoPath = newExerciseData.videoPath;
-    oldExercise.description = newExerciseData.description;
-    oldExercise.save();
+    await oldExercise.save();
     notifyListeners();
   }
 
-  void deleteCustomExercise(CustomExercise exercise) {
-    exercise.delete();
+  Future<void> deleteCustomExercise(CustomExercise exercise) async {
+    await exercise.delete();
     _customExercises.removeWhere((ex) => ex.key == exercise.key);
+    notifyListeners();
+  }
+
+  Future<void> deleteWorkoutHistory(DateTime date) async {
+    final dateKey = DateTime.utc(date.year, date.month, date.day);
+    final stringKey = dateKey.toIso8601String();
+
+    _workoutHistory.remove(dateKey);
+    await _historyBox.delete(stringKey);
+    
     notifyListeners();
   }
 }
