@@ -39,16 +39,13 @@ class CustomExercise extends HiveObject {
   String? videoPath;
   @HiveField(4)
   String? description;
-  @HiveField(5)
-  final String subtype;
   
   CustomExercise({
     required this.name, 
     required this.muscleGroup, 
     this.imagePath, 
     this.videoPath, 
-    this.description,
-    required this.subtype,
+    this.description
   });
 }
 
@@ -87,13 +84,6 @@ class WorkoutService extends ChangeNotifier {
   List<Exercise> get todaysCompletedWorkout {
     final today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return _workoutHistory[today] ?? [];
-  }
-  
-  int get workoutsThisMonth {
-    final now = DateTime.now();
-    return _workoutHistory.keys
-        .where((date) => date.year == now.year && date.month == now.month)
-        .length;
   }
 
   int get completedExercisesCount => _currentWorkoutExercises.where((e) => e.isCompleted).length;
@@ -134,12 +124,12 @@ class WorkoutService extends ChangeNotifier {
 
   void _addDefaultExercises() {
     final defaultExercises = [
-        CustomExercise(name: 'Deadlifts', muscleGroup: 'Back', subtype: 'Subtype 1'),
-        CustomExercise(name: 'Lat Pulldowns', muscleGroup: 'Back', subtype: 'Subtype 2'),
-        CustomExercise(name: 'Barbell Bench Press', muscleGroup: 'Chest', subtype: 'Subtype 1'),
-        CustomExercise(name: 'Dumbbell Flyes', muscleGroup: 'Chest', subtype: 'Subtype 2'),
-        CustomExercise(name: 'Squats', muscleGroup: 'Legs', subtype: 'Subtype 1'),
-        CustomExercise(name: 'Leg Curls', muscleGroup: 'Legs', subtype: 'Subtype 2'),
+        CustomExercise(name: 'Deadlifts', muscleGroup: 'Back', description: 'A powerful full-body exercise.'),
+        CustomExercise(name: 'Barbell Incline Bench Press', muscleGroup: 'Chest', description: 'Targets the upper chest.'),
+        CustomExercise(name: 'Squats', muscleGroup: 'Legs', description: 'The ultimate lower body workout.'),
+        CustomExercise(name: 'Barbell Push Press', muscleGroup: 'Shoulders', description: 'Builds explosive shoulder strength.'),
+        CustomExercise(name: 'Lat Pulldowns', muscleGroup: 'Back', description: 'Great for building a wide back.'),
+        CustomExercise(name: 'Dumbbell Curls', muscleGroup: 'Biceps', description: 'Classic exercise for bicep peaks.'),
     ];
     for (var ex in defaultExercises) {
       _customExercisesBox.add(ex);
@@ -232,26 +222,16 @@ class WorkoutService extends ChangeNotifier {
   }
 
   void updateCustomExercise(CustomExercise oldExercise, CustomExercise newExerciseData) {
-    deleteCustomExercise(oldExercise);
-    addCustomExercise(newExerciseData);
+    oldExercise.imagePath = newExerciseData.imagePath;
+    oldExercise.videoPath = newExerciseData.videoPath;
+    oldExercise.description = newExerciseData.description;
+    oldExercise.save();
     notifyListeners();
   }
 
   void deleteCustomExercise(CustomExercise exercise) {
-    if (exercise.isInBox) {
-      exercise.delete();
-    }
-    _customExercises.removeWhere((ex) => ex.name == exercise.name && ex.muscleGroup == exercise.muscleGroup && ex.subtype == exercise.subtype);
-    notifyListeners();
-  }
-
-  Future<void> deleteWorkoutHistory(DateTime date) async {
-    final dateKey = DateTime.utc(date.year, date.month, date.day);
-    final stringKey = dateKey.toIso8601String();
-
-    _workoutHistory.remove(dateKey);
-    await _historyBox.delete(stringKey);
-    
+    exercise.delete();
+    _customExercises.removeWhere((ex) => ex.key == exercise.key);
     notifyListeners();
   }
 }
