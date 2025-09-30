@@ -96,15 +96,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     );
   }
 
-  void _finishWorkout() {
-    final int completedCount = _workoutService.finishCurrentWorkout();
+  void _finishWorkout() async {
+    final int completedCount = await _workoutService.finishCurrentWorkout();
     _showSummaryDialog(completedCount);
   }
 
   @override
   Widget build(BuildContext context) {
     final muscles = _workoutService.todaysExercises
-        .map((e) => _workoutService.customExercises.firstWhere((ce) => ce.name == e.name, orElse: () => CustomExercise(name: '', muscleGroup: 'Unknown')).muscleGroup)
+        .map((e) => _workoutService.customExercises.firstWhere((ce) => ce.name == e.name, orElse: () => CustomExercise(name: '', muscleGroup: 'Unknown', subtype: 'Subtype 1')).muscleGroup)
         .toSet().toList();
     final title = muscles.isEmpty ? 'Current Workout' : muscles.join(' & ');
 
@@ -113,17 +113,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         title: Text(title),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Center(
-              child: Text(
-                _formatDuration(_duration),
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-            ),
-          ),
-        ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(20.0),
